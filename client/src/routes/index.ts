@@ -4,6 +4,7 @@ import Home from '../screens/Home';
 import About from '../screens/About';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
+import MovieDetail from '../screens/MovieDetail';
 
 interface RouteConfig {
   path: string;
@@ -26,6 +27,10 @@ const routes: RouteConfig[] = [
   {
     path: '/register',
     component: Register,
+  },
+  {
+    path: '/movie/:id',
+    component: MovieDetail,
   },
 ];
 
