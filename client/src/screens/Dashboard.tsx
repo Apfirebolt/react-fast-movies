@@ -2,7 +2,7 @@ import React from "react";
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center bg-gray-100 p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-4">Dashboard</h1>
       <p className="text-lg text-gray-600 text-center max-w-2xl">
         Welcome to your dashboard! Here you can manage your account, track your

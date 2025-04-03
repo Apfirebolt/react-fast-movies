@@ -11,7 +11,7 @@ class MovieBase(BaseModel):
     poster: Optional[HttpUrl] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MovieCreate(MovieBase):

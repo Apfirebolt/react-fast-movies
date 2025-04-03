@@ -18,7 +18,7 @@ const MovieDetail: React.FC = () => {
       setError(null);
 
       const response = await axios.get<Movie>(
-        `${MOVIE_API_URL}?i=${imdbID}&apikey=305a3406`
+        `${MOVIE_API_URL}?i=${imdbID}&apikey=`
       );
       if (response.status === 200) {
         setMovie(response.data);

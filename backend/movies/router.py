@@ -12,7 +12,7 @@ from .import services
 
 router = APIRouter(
     tags=["Movie"],
-    prefix='/movies'
+    prefix='/api/movies'
 )
 
 

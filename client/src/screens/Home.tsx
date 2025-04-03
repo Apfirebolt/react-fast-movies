@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
-import type { Movies } from "../types/Movie";
-import { MOVIE_API_URL } from "../config";
+import type { Movies, MovieDetails } from "../types/Movie";
+import useAuthStore from "../stores/auth";
+import { toast } from "react-toastify";
+import { MOVIE_API_URL, API_URL } from "../config";
 
 
 const Home: React.FC = () => {
@@ -11,6 +13,43 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
   const [error, setError] = useState<string | null>(null);  
+
+  const { user } = useAuthStore();
+
+  const saveMovie = async (movie: MovieDetails) => {
+    if (!user) {
+      toast.error("You need to be logged in to save a movie.");
+      return;
+    }
+    try {
+      const payload = {
+        year: movie.Year,
+        title: movie.Title,
+        imdbID: movie.imdbID,
+        type: movie.Type,
+        poster: movie.Poster,
+      }
+      const response = await axios.post<MovieDetails>(
+        `${API_URL}/movies`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.access_token}`,
+          },
+        }
+      );
+      if (response.status === 201) {
+        toast.success("Movie saved successfully!");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Failed to save movie.");
+      }
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -20,7 +59,7 @@ const Home: React.FC = () => {
       setError(null);
 
       const response = await axios.get<Movies>(
-        `${MOVIE_API_URL}?s=${searchQuery}&apikey=305a3406`
+        `${MOVIE_API_URL}?s=${searchQuery}&apikey=`
       );
       if (response.status === 200) {
         setMovies(response.data);
@@ -78,6 +117,12 @@ const Home: React.FC = () => {
             className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
           >
             View Details
+          </button>
+          <button
+            onClick={() => saveMovie(movie)}
+            className="mt-2 mx-2 px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
+          >
+            Save Movie
           </button>
         </div>
           ))}
