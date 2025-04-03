@@ -28,6 +28,11 @@ const Header: React.FC = () => {
               <>
                 <li className="hover:text-gray-400">Welcome {user.user.email}</li>
                 <li>
+                  <Link to="/dashboard" className="hover:text-gray-400">
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
                   <button
                     onClick={logout}
                     className="hover:text-gray-400 focus:outline-none"

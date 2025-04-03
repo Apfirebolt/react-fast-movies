@@ -40,7 +40,7 @@ async def get_movie_by_id(movie_id: int, database: Session = Depends(db.get_db),
 
 
 @router.delete('/{movie_id}', status_code=status.HTTP_204_NO_CONTENT, response_class=Response)
-async def delete_movie_by_id(movie_id: int,
+async def delete_movie_by_id(movie_id: str,
                                 database: Session = Depends(db.get_db),
                                 current_user: User = Depends(get_current_user)):
     return await services.delete_movie_by_id(movie_id, database)
