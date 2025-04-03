@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import useAuthStore from "../stores/auth";
+
 
 const Header: React.FC = () => {
+  const { user, logout } = useAuthStore();
+
   return (
     <header className="bg-gray-800 text-white">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
@@ -20,16 +24,32 @@ const Header: React.FC = () => {
                 About
               </Link>
             </li>
-            <li>
-              <Link to="/login" className="hover:text-gray-400">
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link to="/register" className="hover:text-gray-400">
-                Register
-              </Link>
-            </li>
+            {user ? (
+              <>
+                <li className="hover:text-gray-400">Welcome {user.user.email}</li>
+                <li>
+                  <button
+                    onClick={logout}
+                    className="hover:text-gray-400 focus:outline-none"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link to="/login" className="hover:text-gray-400">
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" className="hover:text-gray-400">
+                    Register
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

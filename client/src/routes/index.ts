@@ -1,10 +1,10 @@
 // routes/index.ts
-
-import Home from '../screens/Home';
-import About from '../screens/About';
-import Login from '../screens/Login';
-import Register from '../screens/Register';
-import MovieDetail from '../screens/MovieDetail';
+import Home from "../screens/Home";
+import About from "../screens/About";
+import Login from "../screens/Login";
+import Register from "../screens/Register";
+import MovieDetail from "../screens/MovieDetail";
+import React from "react"; // Import React
 
 interface RouteConfig {
   path: string;
@@ -13,23 +13,23 @@ interface RouteConfig {
 
 const routes: RouteConfig[] = [
   {
-    path: '/',
+    path: "/",
     component: Home,
   },
   {
-    path: '/about',
+    path: "/about",
     component: About,
   },
   {
-    path: '/login',
+    path: "/login",
     component: Login,
   },
   {
-    path: '/register',
+    path: "/register",
     component: Register,
   },
   {
-    path: '/movie/:id',
+    path: "/movie/:id",
     component: MovieDetail,
   },
 ];
