@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import useAuthStore from "../stores/auth";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { register } = useAuthStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -11,6 +14,15 @@ const Register: React.FC = () => {
     console.log("Email:", email);
     console.log("Password:", password);
     // Add your registration logic here
+    register({ name: username, email, password })
+      .then(() => {
+        console.log("Registration successful");
+        // Redirect to login page or show success message
+      })
+      .catch((error) => {
+        console.error("Registration failed:", error);
+        // Handle registration error (e.g., show error message)
+      });
   };
 
   return (

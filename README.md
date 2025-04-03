@@ -47,3 +47,17 @@ A working demo of the application in the form of a video can be found here: http
 $ docker-compose up -d --build
 $ docker-compose exec web alembic upgrade head
 ```
+
+## Alembic
+
+```
+alembic revision --autogenerate -m "Initial tables"
+```
+
+```
+alembic upgrade head
+```
+
+```
+pip install 'pydantic[email]'
+```

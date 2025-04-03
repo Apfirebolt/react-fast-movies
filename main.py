@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import time
 import uvicorn
 
+from backend.auth import router as auth_router
+
 app = FastAPI(title="Fast API Movies App",
     docs_url="/movies-docs",
     version="0.0.1")
@@ -16,6 +18,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_router.router)
 
 @app.get("/")  # Corrected line: added parentheses
 async def root():

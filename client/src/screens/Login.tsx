@@ -1,14 +1,25 @@
 import React, { useState } from "react";
+import useAuthStore from "../stores/auth";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuthStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Email:", email);
     console.log("Password:", password);
     // Add your login logic here
+    login({ email, password })
+      .then(() => {
+        console.log("Login successful");
+        // Redirect to dashboard or home page
+      })
+      .catch((error) => {
+        console.error("Login failed:", error);
+        // Handle login error (e.g., show error message)
+      });
   };
 
   return (
