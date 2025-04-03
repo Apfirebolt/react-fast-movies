@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 import type { Movies } from "../types/Movie";
 import { MOVIE_API_URL } from "../config";
 
@@ -19,7 +20,7 @@ const Home: React.FC = () => {
       setError(null);
 
       const response = await axios.get<Movies>(
-        `${MOVIE_API_URL}?s=${searchQuery}&apikey=`
+        `${MOVIE_API_URL}?s=${searchQuery}&apikey=305a3406`
       );
       if (response.status === 200) {
         setMovies(response.data);
@@ -35,11 +36,11 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center bg-gray-100 p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-4">
         Welcome to Fast React Movies
       </h1>
-      <div className="mb-4">
+      <div className="mb-4 flex justify-center items-center">
         <input
           type="text"
           value={searchQuery}
@@ -49,11 +50,14 @@ const Home: React.FC = () => {
         />
       <button
         onClick={() => getMovies()}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+        className="px-4 py-2 bg-blue-500 mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
       >
         Search
       </button>
-      {loading && <p className="text-lg text-gray-600 text-center">Loading...</p>}
+      
+      </div>
+
+      {loading && <Loader />}
       {error && <p className="text-lg text-red-600 text-center">{error}</p>}
       {movies && (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 mt-4">
@@ -79,7 +83,6 @@ const Home: React.FC = () => {
           ))}
         </div>
       )}
-      </div>
       <p className="text-lg text-gray-600 text-center max-w-2xl">
         Discover the latest movies, explore your favorites, and enjoy a seamless
         browsing experience. Built with React, TypeScript, and Tailwind CSS, our

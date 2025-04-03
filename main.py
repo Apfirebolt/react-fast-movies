@@ -4,6 +4,7 @@ import time
 import uvicorn
 
 from backend.auth import router as auth_router
+from backend.movies import router as movies_router
 
 app = FastAPI(title="Fast API Movies App",
     docs_url="/movies-docs",
@@ -20,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router)
+app.include_router(movies_router.router)
 
 @app.get("/")  # Corrected line: added parentheses
 async def root():

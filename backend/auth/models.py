@@ -14,7 +14,7 @@ class User(Base):
     role = Column(String(50), nullable=True, default='user')
     password = Column(String(255))
 
-    # movies = relationship("Task", back_populates="owner")
+    movies = relationship("Movie", back_populates="owner")
 
     def __init__(self, username, email, role, password, *args, **kwargs):
         self.username = username
