@@ -22,7 +22,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-neutral-100">
       <motion.div className="w-full max-w-md p-8 bg-white rounded shadow-md"
         initial={{ opacity: 0, x: -100 }}
         animate={{ opacity: 1, x: 0 }}

@@ -18,3 +18,14 @@ h2 {
   font-size: 2rem;
   font-weight: 700;
 }
+
+@theme {
+  --color-primary: #3D0301;
+  --color-secondary: #B03052;
+  --color-tertiary: #3674B5;
+  --color-light: #D1F8EF;
+  --color-dark: #1D1616;
+  --color-danger: #E82561;
+  --color-success: #5B913B;
+  --color-info: #f9f871;
+}

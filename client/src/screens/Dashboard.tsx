@@ -63,7 +63,7 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center bg-light p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-4">Dashboard</h1>
       <p className="text-lg text-gray-600 text-center max-w-2xl">
         Welcome to your dashboard! Here you can manage your account, track your
@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {loading && <Loader />}
-      {error && <p className="text-lg text-red-600 text-center">{error}</p>}
+      {error && <p className="text-lg text-secondary text-center">{error}</p>}
       {filteredMovies && filteredMovies.length > 0 ? (
         <motion.div
           className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600">{movie.year}</p>
             <button
               onClick={() => deleteMovie(movie)}
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md shadow-md hover:bg-red-600"
+              className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary"
             >
               Delete
             </button>

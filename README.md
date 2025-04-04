@@ -1,6 +1,7 @@
 # Movie Recommendation System using React and FastAPI
 
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
@@ -9,7 +10,7 @@
 
 ## Tech Stack
 
-The project back-end is created using FastAPI in Python, and React is used for the front-end. Tailwind CSS classes are used to style the UI components. It uses "react-query" for data fetching and caching, and Redux for state management. For the database, "Postgres" has been used.
+The project back-end is created using FastAPI in Python, and React is used for the front-end. Tailwind CSS classes are used to style the UI components. It uses "Zustand" for data management and caching. For the database, "Postgres" has been used. It uses TypeScript for type safety and to ensure robust and maintainable code. It helps in catching errors during development and provides better tooling support for the project. 
 
 ## Introduction
 
@@ -21,11 +22,7 @@ The application also includes a feature to display movie trailers using YouTube 
 
 ## Updates
 
-27/12/22: Added user authentication and watchlist functionality. Users can now save movies to their watchlist and manage them.
-
-1/5/23: Recommendation engine integrated using collaborative filtering. Users now receive personalized movie recommendations.
-
-28/8/23: Added movie trailer support using YouTube API. Improved search functionality with filters for genres, release year, and ratings.
+- Any updates in the project would be added in future
 
 ## Screenshots
 

@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-gray-800 text-white">
+    <header className="bg-primary text-white">
       <aside>
         <div className="md:hidden py-3 px-2">
           <button
@@ -29,28 +29,28 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <ul className="flex flex-col space-y-4 p-4">
-                  <li className="bg-blue-500 p-2 rounded-md">
-                    <Link to="/" className="hover:text-gray-400">
+                  <li className="bg-secondary p-2 rounded-md">
+                    <Link to="/" className="hover:text-light">
                       Home
                     </Link>
                   </li>
-                  <li className="bg-blue-500 p-2 rounded-md">
-                    <Link to="/about" className="hover:text-gray-400">
+                  <li className="bg-secondary p-2 rounded-md">
+                    <Link to="/about" className="hover:text-light">
                       About
                     </Link>
                   </li>
                   {user ? (
                     <>
-                      <li className="hover:text-gray-400">Welcome {user?.user?.email}</li>
-                      <li className="bg-blue-500 p-2 rounded-md">
-                        <Link to="/dashboard" className="hover:text-gray-400">
+                      <li className="hover:text-light">Welcome, {user?.user?.email}</li>
+                      <li className="bg-secondary p-2 rounded-md">
+                        <Link to="/dashboard" className="hover:text-light">
                           Dashboard
                         </Link>
                       </li>
-                      <li className="bg-blue-500 p-2 rounded-md">
+                      <li className="bg-secondary p-2 rounded-md">
                         <button
                           onClick={logout}
-                          className="hover:text-gray-400 focus:outline-none"
+                          className="hover:text-light focus:outline-none"
                         >
                           Logout
                         </button>
@@ -58,13 +58,13 @@ const Header: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <li className="bg-blue-500 p-2 rounded-md">
-                        <Link to="/login" className="hover:text-gray-400">
+                      <li className="bg-secondary p-2 rounded-md">
+                        <Link to="/login" className="hover:text-light">
                           Login
                         </Link>
                       </li>
-                      <li className="bg-blue-500 p-2 rounded-md">
-                        <Link to="/register" className="hover:text-gray-400">
+                      <li className="bg-secondary p-2 rounded-md">
+                        <Link to="/register" className="hover:text-light">
                           Register
                         </Link>
                       </li>
@@ -83,27 +83,27 @@ const Header: React.FC = () => {
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link to="/" className="hover:text-gray-400">
+              <Link to="/" className="hover:text-light">
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-gray-400">
+              <Link to="/about" className="hover:text-light">
                 About
               </Link>
             </li>
             {user ? (
               <>
-                <li className="hover:text-gray-400">Welcome {user.user.email}</li>
+                <li className="hover:text-light">Welcome {user.user.email}</li>
                 <li>
-                  <Link to="/dashboard" className="hover:text-gray-400">
+                  <Link to="/dashboard" className="hover:text-light">
                     Dashboard
                   </Link>
                 </li>
                 <li>
                   <button
                     onClick={logout}
-                    className="hover:text-gray-400 focus:outline-none"
+                    className="hover:text-light focus:outline-none"
                   >
                     Logout
                   </button>
@@ -112,12 +112,12 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/login" className="hover:text-gray-400">
+                  <Link to="/login" className="hover:text-light">
                     Login
                   </Link>
                 </li>
                 <li>
-                  <Link to="/register" className="hover:text-gray-400">
+                  <Link to="/register" className="hover:text-light">
                     Register
                   </Link>
                 </li>

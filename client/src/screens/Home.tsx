@@ -75,7 +75,7 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center bg-light p-4">
       <h1 className="text-4xl font-bold text-gray-800 mb-4">
         Welcome to Fast React Movies
       </h1>
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
         />
       <button
         onClick={() => getMovies()}
-        className="px-4 py-2 bg-blue-500 mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
+        className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
       >
         Search
       </button>
@@ -114,13 +114,13 @@ const Home: React.FC = () => {
           />
           <button
             onClick={() => goToMovieDetails(movie.imdbID)}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
+            className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md hover:bg-blue-600"
           >
             View Details
           </button>
           <button
             onClick={() => saveMovie(movie)}
-            className="mt-2 mx-2 px-4 py-2 bg-green-500 text-white rounded-md shadow-md hover:bg-green-600"
+            className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md hover:bg-green-600"
           >
             Save Movie
           </button>
