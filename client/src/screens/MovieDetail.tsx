@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import type { Movie } from "../types/Movie";
 import { useParams, useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 import { MOVIE_API_URL } from "../config";
 
 const MovieDetail: React.FC = () => {
+  const mapApiKey = import.meta.env.VITE_MAP_API_KEY;
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +20,7 @@ const MovieDetail: React.FC = () => {
       setError(null);
 
       const response = await axios.get<Movie>(
-        `${MOVIE_API_URL}?i=${imdbID}&apikey=`
+        `${MOVIE_API_URL}?i=${imdbID}&apikey=${mapApiKey}`
       );
       if (response.status === 200) {
         setMovie(response.data);
@@ -34,11 +36,10 @@ const MovieDetail: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <p className="text-lg text-gray-600 text-center">Loading...</p>;
+    return (<Loader />);
   }
-
   if (error) {
-    return <p className="text-lg text-red-600 text-center">{error}</p>;
+    return <p className="text-lg text-secondary text-center border-2 border-primary px-2 py-3">{error}</p>;
   }
 
   if (!movie) {

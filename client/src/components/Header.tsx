@@ -83,27 +83,27 @@ const Header: React.FC = () => {
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link to="/" className="hover:text-light">
+              <Link to="/" className="hover:text-light transition-all duration-200 hover:text-xl">
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-light">
+              <Link to="/about" className="hover:text-light transition-all duration-200 hover:text-xl">
                 About
               </Link>
             </li>
             {user ? (
               <>
-                <li className="hover:text-light">Welcome {user.user.email}</li>
+                <li className="hover:text-light">Welcome, {user.user.email}</li>
                 <li>
-                  <Link to="/dashboard" className="hover:text-light">
+                  <Link to="/dashboard" className="hover:text-light transition-all duration-200 hover:text-xl">
                     Dashboard
                   </Link>
                 </li>
                 <li>
                   <button
                     onClick={logout}
-                    className="hover:text-light focus:outline-none"
+                    className="hover:text-light focus:outline-none transition-all duration-200 hover:text-xl"
                   >
                     Logout
                   </button>

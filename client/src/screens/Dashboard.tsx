@@ -28,6 +28,10 @@ const Dashboard: React.FC = () => {
         setMovies(response.data);
       }
     } catch (err) {
+      if (err.status === 401) {
+        toast.dismiss();
+        toast.error("Session expired. Please log in again.");
+      }
       setError("Failed to fetch movies. Please try again.");
     }
     setLoading(false);
@@ -45,6 +49,7 @@ const Dashboard: React.FC = () => {
       });
 
       if (response.status === 204) {
+        toast.dismiss();
         toast.success("Movie deleted successfully.");
         await fetchMovies();
       }
@@ -80,7 +85,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {loading && <Loader />}
-      {error && <p className="text-lg text-secondary text-center">{error}</p>}
+      {error && <p className="text-lg text-secondary text-center border-2 border-primary px-2 py-3">{error}</p>}
       {filteredMovies && filteredMovies.length > 0 ? (
         <motion.div
           className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
@@ -7,12 +7,13 @@ import useAuthStore from "../stores/auth";
 import { toast } from "react-toastify";
 import { MOVIE_API_URL, API_URL } from "../config";
 
-
 const Home: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const mapApiKey = import.meta.env.VITE_MAP_API_KEY;
+  const [searchQuery, setSearchQuery] = useState<string>("man");
+  const [debouncedQuery, setDebouncedQuery] = useState<string>(searchQuery);
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
-  const [error, setError] = useState<string | null>(null);  
+  const [error, setError] = useState<string | null>(null);
 
   const { user } = useAuthStore();
 
@@ -28,7 +29,7 @@ const Home: React.FC = () => {
         imdbID: movie.imdbID,
         type: movie.Type,
         poster: movie.Poster,
-      }
+      };
       const response = await axios.post<MovieDetails>(
         `${API_URL}/movies`,
         payload,
@@ -53,26 +54,44 @@ const Home: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const getMovies = async () => {
+  const getMovies = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
       const response = await axios.get<Movies>(
-        `${MOVIE_API_URL}?s=${searchQuery}&apikey=`
+        `${MOVIE_API_URL}?s=${debouncedQuery}&apikey=${mapApiKey}`
       );
       if (response.status === 200) {
         setMovies(response.data);
       }
-    } catch (err) {
-      setError("Failed to fetch movies. Please try again.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError("An unexpected error occurred. Please try again.");
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
     setLoading(false);
-  };
+  }, [debouncedQuery, mapApiKey]);
 
   const goToMovieDetails = (imdbID: string) => {
     navigate(`/movie/${imdbID}`);
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500); // Adjust the debounce delay as needed (e.g., 500ms)
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    getMovies();
+  }, [getMovies]);
 
   return (
     <div className="flex flex-col items-center justify-center bg-light p-4">
@@ -87,44 +106,47 @@ const Home: React.FC = () => {
           placeholder="Search for movies..."
           className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-      <button
-        onClick={() => getMovies()}
-        className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
-      >
-        Search
-      </button>
-      
+        <button
+          onClick={() => getMovies()}
+          className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
+        >
+          Search
+        </button>
       </div>
 
       {loading && <Loader />}
-      {error && <p className="text-lg text-red-600 text-center">{error}</p>}
+      {error && (
+        <p className="text-lg text-secondary text-center border-2 border-primary px-2 py-3">
+          {error}
+        </p>
+      )}
       {movies && (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 mt-4">
-          {movies.Search.map((movie) => (
-        <div
-          key={movie.imdbID}
-          className="break-inside-avoid p-4 border rounded-md shadow-md mb-4"
-        >
-          <h2 className="text-xl font-bold">{movie.Title}</h2>
-          <p>{movie.Year}</p>
-          <img
-            src={movie.Poster}
-            alt={movie.Title}
-            className="w-full h-auto mt-2 rounded-md"
-          />
-          <button
-            onClick={() => goToMovieDetails(movie.imdbID)}
-            className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md hover:bg-blue-600"
-          >
-            View Details
-          </button>
-          <button
-            onClick={() => saveMovie(movie)}
-            className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md hover:bg-green-600"
-          >
-            Save Movie
-          </button>
-        </div>
+          {movies.Search && movies.Search.map((movie) => (
+            <div
+              key={movie.imdbID}
+              className="break-inside-avoid p-4 border rounded-md shadow-md mb-4"
+            >
+              <h2 className="text-xl font-bold">{movie.Title}</h2>
+              <p>{movie.Year}</p>
+              <img
+                src={movie.Poster}
+                alt={movie.Title}
+                className="w-full h-auto mt-2 rounded-md"
+              />
+              <button
+                onClick={() => goToMovieDetails(movie.imdbID)}
+                className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md hover:bg-blue-600"
+              >
+                View Details
+              </button>
+              <button
+                onClick={() => saveMovie(movie)}
+                className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md hover:bg-green-600"
+              >
+                Save Movie
+              </button>
+            </div>
           ))}
         </div>
       )}
