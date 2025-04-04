@@ -41,7 +41,7 @@ const Header: React.FC = () => {
                   </li>
                   {user ? (
                     <>
-                      <li className="hover:text-gray-400">Welcome {user.user.email}</li>
+                      <li className="hover:text-gray-400">Welcome {user?.user?.email}</li>
                       <li className="bg-blue-500 p-2 rounded-md">
                         <Link to="/dashboard" className="hover:text-gray-400">
                           Dashboard

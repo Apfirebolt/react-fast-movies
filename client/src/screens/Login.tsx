@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useAuthStore from "../stores/auth";
-import { toast } from "react-toastify";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -9,22 +10,23 @@ const Login: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
-    // Add your login logic here
+
     login({ email, password })
       .then(() => {
         // Redirect to dashboard or home page
       })
       .catch((error) => {
         console.error("Login failed:", error.data);
-
       });
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-white rounded shadow-md">
+      <motion.div className="w-full max-w-md p-8 bg-white rounded shadow-md"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.3 }}>
         <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
           Login
         </h2>
@@ -36,15 +38,18 @@ const Login: React.FC = () => {
             >
               Email
             </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your email"
-              required
-            />
+            <div className="relative">
+              <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
           </div>
           <div className="mb-6">
             <label
@@ -53,15 +58,18 @@ const Login: React.FC = () => {
             >
               Password
             </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your password"
-              required
-            />
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
           </div>
           <button
             type="submit"
@@ -76,7 +84,7 @@ const Login: React.FC = () => {
             Sign up
           </a>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
