@@ -5,6 +5,7 @@ import useAuthStore from "../stores/auth";
 import { Movie, Movies } from "../types/Movie";
 import { API_URL } from "../config";
 import Loader from "../components/Loader";
+import Content from "../components/Content";
 import { motion } from "framer-motion";
 
 const Dashboard: React.FC = () => {
@@ -69,11 +70,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-light p-4">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4">Dashboard</h1>
-      <p className="text-lg text-gray-600 text-center max-w-2xl">
-        Welcome to your dashboard! Here you can manage your account, track your
-        favorite movies, and explore personalized recommendations.
-      </p>
+      <Content
+        title="Welcome to Your Dashboard"
+        content="Welcome to your dashboard! Here you can manage your account, track your
+        favorite movies, and explore personalized recommendations."
+      />
       <div className="flex justify-between items-center my-4">
         <input
           type="text"

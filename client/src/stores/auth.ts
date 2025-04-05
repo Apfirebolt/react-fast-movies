@@ -72,9 +72,9 @@ const useAuthStore = create<AuthState>((set) => {
         );
         if (response.status === 201) {
           set({ user: response.data });
-          toast.success("Registration successful!");
+          toast.success("Registration successful! Please log in.");
           if (navigate) {
-            navigate("/dashboard");
+            navigate("/login");
           }
         }
       } catch (error) {

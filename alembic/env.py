@@ -5,9 +5,14 @@ from sqlalchemy import pool
 
 from alembic import context
 from backend.db import Base
+import os
 
 from backend.auth.models import User
 from backend.movies.models import Movie
+
+# Import and load environment variables
+from dotenv import load_dotenv
+load_dotenv()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -30,10 +35,11 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    db_user = 'postgres'
-    db_password = 'pass123'
-    db_host ='localhost'
-    db_name = 'fast-movies'
+    db_user = os.getenv("DATABASE_USER")
+    db_password = os.getenv("DATABASE_PASSWORD")
+    db_host = os.getenv("DATABASE_HOST")
+    db_name = os.getenv("DATABASE_NAME")
+
     return f"postgresql://{db_user}:{db_password}@{db_host}/{db_name}"
 
 

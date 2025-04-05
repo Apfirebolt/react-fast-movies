@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import Content from "../components/Content";
+import { FaSearch } from "react-icons/fa";
 import type { Movies, MovieDetails } from "../types/Movie";
 import useAuthStore from "../stores/auth";
 import { toast } from "react-toastify";
@@ -95,10 +97,11 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center bg-light p-4">
-      <h1 className="text-4xl font-bold text-gray-800 mb-4">
-        Welcome to Fast React Movies
-      </h1>
-      <div className="mb-4 flex justify-center items-center">
+      <Content
+        title="Welcome to Movie Finder"
+        content="Discover the latest movies, explore your favorites, and enjoy a seamless browsing experience."
+      />
+      <div className="mb-4 flex justify-center items-center w-1/2">
         <input
           type="text"
           value={searchQuery}
@@ -108,8 +111,9 @@ const Home: React.FC = () => {
         />
         <button
           onClick={() => getMovies()}
-          className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600"
+          className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600 flex items-center"
         >
+          <FaSearch className="mr-2" />
           Search
         </button>
       </div>
