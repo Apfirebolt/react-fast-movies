@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center bg-light p-4">
+    <div className="bg-light p-4">
       <Content
         title="Welcome to Your Dashboard"
         content="Welcome to your dashboard! Here you can manage your account, track your
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
           placeholder="Search for movies..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border rounded-md"
+          className="p-2 border rounded-md w-full sm:w-1/2"
         />
       </div>
 

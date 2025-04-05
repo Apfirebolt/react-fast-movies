@@ -103,3 +103,129 @@ async def delete_movie_by_id(movie_id, database):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while deleting the movie: {str(e)}",
         )
+
+
+# Playlist services
+async def create_new_playlist(
+    request, database: Session, current_user: User
+) -> models.Playlist:
+    try:
+        new_playlist = models.Playlist(
+            name=request.name,
+            owner_id=current_user.id,
+            createdDate=datetime.now(),
+        )
+        database.add(new_playlist)
+        database.commit()
+        database.refresh(new_playlist)
+        return new_playlist
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while creating the playlist: {str(e)}",
+        )
+
+
+async def get_playlist_listing(database, current_user) -> List[models.Playlist]:
+    try:
+        playlists = (
+            database.query(models.Playlist)
+            .filter(models.Playlist.owner_id == current_user)
+            .all()
+        )
+        return playlists
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while fetching playlists: {str(e)}",
+        )
+
+
+async def get_playlist_by_id(playlist_id, current_user, database):
+    try:
+        playlist = (
+            database.query(models.Playlist)
+            .filter_by(id=playlist_id, owner_id=current_user)
+            .first()
+        )
+        if not playlist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Playlist Not Found!"
+            )
+        return playlist
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while fetching the playlist: {str(e)}",
+        )
+
+
+async def delete_playlist_by_id(playlist_id, database):
+    try:
+        database.query(models.Playlist).filter(
+            models.Playlist.id == playlist_id
+        ).delete()
+        database.commit()
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while deleting the playlist: {str(e)}",
+        )
+
+
+async def add_movie_to_playlist(
+    movie_id: int, playlist_id: int, database: Session
+) -> models.PlaylistMovie:
+    try:
+        new_playlist_movie = models.PlaylistMovie(
+            movie_id=movie_id,
+            playlist_id=playlist_id,
+            createdDate=datetime.now(),
+        )
+        database.add(new_playlist_movie)
+        database.commit()
+        database.refresh(new_playlist_movie)
+        return new_playlist_movie
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while adding the movie to the playlist: {str(e)}",
+        )
+
+
+async def remove_movie_from_playlist(
+    movie_id: int, playlist_id: int, database: Session
+) -> None:
+    try:
+        database.query(models.PlaylistMovie).filter(
+            models.PlaylistMovie.movie_id == movie_id,
+            models.PlaylistMovie.playlist_id == playlist_id,
+        ).delete()
+        database.commit()
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while removing the movie from the playlist: {str(e)}",
+        )
+
+
+async def get_movies_in_playlist(
+    playlist_id: int, database: Session
+) -> List[models.Movie]:
+    try:
+        movies = (
+            database.query(models.Movie)
+            .join(models.PlaylistMovie)
+            .filter(models.PlaylistMovie.playlist_id == playlist_id)
+            .all()
+        )
+        return movies
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while fetching movies in the playlist: {str(e)}",
+        )

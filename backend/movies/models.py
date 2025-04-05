@@ -20,3 +20,19 @@ class Movie(Base):
     owner = relationship("User", back_populates="movies")
 
 
+class Playlist(Base):
+    __tablename__ = "playlist"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    createdDate = Column(DateTime, default=datetime.now)
+    name = Column(String(50))
+    owner_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"))
+
+
+class PlaylistMovie(Base):
+    __tablename__ = "playlist_movie"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    createdDate = Column(DateTime, default=datetime.now)
+    playlist_id = Column(Integer, ForeignKey("playlist.id", ondelete="CASCADE"))
+    movie_id = Column(Integer, ForeignKey("movie.id", ondelete="CASCADE"))

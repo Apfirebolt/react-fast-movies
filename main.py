@@ -22,6 +22,7 @@ app.add_middleware(
 
 app.include_router(auth_router.router)
 app.include_router(movies_router.router)
+app.include_router(movies_router.playlist_router)
 
 @app.get("/")  # Corrected line: added parentheses
 async def root():
