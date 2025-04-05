@@ -54,7 +54,7 @@ async def delete_movie_by_id(
     database: Session = Depends(db.get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await services.delete_movie_by_id(movie_id, database)
+    return await services.delete_movie_by_id(movie_id, current_user, database)
 
 
 # Playlist Routes
@@ -101,4 +101,15 @@ async def delete_playlist_by_id(
     database: Session = Depends(db.get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return await services.delete_playlist_by_id(playlist_id, database)
+    return await services.delete_playlist_by_id(playlist_id, current_user, database)
+
+@playlist_router.put(
+    "/{playlist_id}", status_code=status.HTTP_200_OK, response_model=schema.PlayList
+)
+async def update_playlist(
+    playlist_id: int,
+    request: schema.PlaylistBase,
+    database: Session = Depends(db.get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return await services.update_playlist(playlist_id, request, current_user, database)

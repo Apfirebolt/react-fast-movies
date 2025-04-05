@@ -93,8 +93,18 @@ async def get_movie_by_id(movie_id, current_user, database):
         )
 
 
-async def delete_movie_by_id(movie_id, database):
+async def delete_movie_by_id(movie_id, current_user: User, database: Session):
     try:
+        # check if movie belongs to the user
+        movie = (
+            database.query(models.Movie)
+            .filter_by(id=movie_id, owner_id=current_user.id)
+            .first()
+        )
+        if not movie:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Movie Not Found!"
+            )
         database.query(models.Movie).filter(models.Movie.imdbID == movie_id).delete()
         database.commit()
     except Exception as e:
@@ -110,6 +120,17 @@ async def create_new_playlist(
     request, database: Session, current_user: User
 ) -> models.Playlist:
     try:
+        # More than 10 playlists for a user is not allowed
+        existing_playlists = (
+            database.query(models.Playlist)
+            .filter(models.Playlist.owner_id == current_user.id)
+            .count()
+        )
+        if existing_playlists >= 10:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You can only create up to 10 playlists.",
+            )
         new_playlist = models.Playlist(
             name=request.name,
             owner_id=current_user.id,
@@ -161,8 +182,18 @@ async def get_playlist_by_id(playlist_id, current_user, database):
         )
 
 
-async def delete_playlist_by_id(playlist_id, database):
+async def delete_playlist_by_id(playlist_id: int, current_user: User, database: Session):
     try:
+        # check if playlist belongs to the user
+        playlist = (
+            database.query(models.Playlist)
+            .filter_by(id=playlist_id, owner_id=current_user.id)
+            .first()
+        )
+        if not playlist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Playlist Not Found!"
+            )
         database.query(models.Playlist).filter(
             models.Playlist.id == playlist_id
         ).delete()
@@ -173,10 +204,41 @@ async def delete_playlist_by_id(playlist_id, database):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while deleting the playlist: {str(e)}",
         )
+    
+
+async def update_playlist(playlist_id: int, request, current_user: User, database):
+    try:
+        # check if playlist belongs to the user
+        playlist = (
+            database.query(models.Playlist)
+            .filter_by(id=playlist_id, owner_id=current_user.id)
+            .first()
+        )
+        if not playlist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Playlist Not Found!"
+            )
+        playlist = database.query(models.Playlist).filter(
+            models.Playlist.id == playlist_id
+        ).first()
+        if not playlist:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Playlist Not Found!"
+            )
+        playlist.name = request.name
+        database.commit()
+        database.refresh(playlist)
+        return playlist
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while updating the playlist: {str(e)}",
+        )
 
 
 async def add_movie_to_playlist(
-    movie_id: int, playlist_id: int, database: Session
+    movie_id: int, playlist_id: int, database: Session,
 ) -> models.PlaylistMovie:
     try:
         new_playlist_movie = models.PlaylistMovie(
