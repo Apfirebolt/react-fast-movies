@@ -13,7 +13,9 @@ services:
       - .env
     depends_on:
       - db
-  
+    environment:
+      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+
   db:
     image: postgres:15.4
     expose:
@@ -22,3 +24,8 @@ services:
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+
+volumes:
+  db_data:

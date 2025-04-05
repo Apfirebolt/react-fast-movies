@@ -1,17 +1,26 @@
-# pull official base image
+# Final Stage (Smaller Runtime Image)
 FROM python:3.12-slim
 
-# set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# set environment variables
+# Install alembic BEFORE switching to the non-root user
+RUN pip install --no-cache-dir alembic
+
+# Copy Alembic configuration and scripts
+COPY ./alembic.ini .
+COPY ./alembic /app/alembic
+COPY ./entrypoint.sh .
+RUN chmod +x /app/entrypoint.sh
+
+# Copy only the necessary artifacts from the builder stage AFTER installing dependencies
+COPY --from=builder /app .
+
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install python dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+# Expose the application port (if applicable)
+EXPOSE 8000
 
-# add app
-COPY . .
+# Define the command to run your application
+ENTRYPOINT ["/app/entrypoint.sh"]
