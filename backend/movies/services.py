@@ -4,11 +4,7 @@ from . import models
 from backend.auth.models import User
 from datetime import datetime
 
-
-from fastapi import HTTPException, status
-from datetime import datetime
 from sqlalchemy.orm import Session
-from . import models
 from pydantic import HttpUrl
 
 
@@ -35,7 +31,7 @@ async def create_new_movie(
         if existing_movie:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Movie already exists in your collection.",
+                detail="This movie has already been added by you.",
             )
 
         new_movie = models.Movie(
@@ -53,11 +49,13 @@ async def create_new_movie(
         return new_movie
     except Exception as e:
         database.rollback()
+        if isinstance(e, HTTPException) and e.status_code == status.HTTP_400_BAD_REQUEST:
+            raise e
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while creating the movie: {str(e)}",
         )
-
+        
 
 async def get_movie_listing(database, current_user) -> List[models.Movie]:
     try:
@@ -68,6 +66,8 @@ async def get_movie_listing(database, current_user) -> List[models.Movie]:
         )
         return movies
     except Exception as e:
+        if isinstance(e, HTTPException) and e.status_code == status.HTTP_400_BAD_REQUEST:
+            raise e
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while fetching movies: {str(e)}",
