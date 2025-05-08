@@ -64,6 +64,35 @@ const Dashboard: React.FC = () => {
     setLoading(false);
   };
 
+  const addPlaylist = async (playlistName: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await axios.post(
+        `${API_URL}/playlists`,
+        { name: playlistName },
+        {
+          headers: {
+            Authorization: `Bearer ${user.access_token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 201) {
+        toast.dismiss();
+        toast.success("Playlist created successfully.");
+        await fetchPlaylists();
+      }
+    } catch (err) {
+      if (err.status === 401) {
+        toast.dismiss();
+        toast.error("Session expired. Please log in again.");
+      }
+      setError("Failed to create playlist. Please try again.");
+    }
+    setLoading(false);
+  };
+
   const deleteMovie = async (movie: MovieDetails) => {
     try {
       setLoading(true);
@@ -150,7 +179,7 @@ const Dashboard: React.FC = () => {
       {selectedTab === "movies" && (
         <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
       )}
-      {selectedTab === "playlist" && <PlayList playlists={playlists} />}
+      {selectedTab === "playlist" && <PlayList playlists={playlists} addPlaylist={addPlaylist} />}
     </div>
   );
 };

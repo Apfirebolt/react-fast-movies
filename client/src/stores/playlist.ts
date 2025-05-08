@@ -2,14 +2,8 @@ import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_URL } from "../config";
+import type { Playlist } from "../types/Playlist";
 import Cookie from "js-cookie";
-
-interface Playlist {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-}
 
 interface PlaylistState {
   playlists: Playlist[];

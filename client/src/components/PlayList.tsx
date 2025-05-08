@@ -1,15 +1,18 @@
-import React from 'react';
-import type { Playlist } from '../types/Playlist';
-import { motion } from 'framer-motion';
+import React from "react";
+import type { Playlist } from "../types/Playlist";
+import { motion } from "framer-motion";
+import PlayListForm from "./PlayListForm";
 
 interface PlayListProps {
-    playlists: Playlist[];
+  playlists: Playlist[];
+  addPlaylist: (name: string) => void;
 }
 
-const PlayList: React.FC<PlayListProps> = ({ playlists }) => {
-    return (
-        <div>
+const PlayList: React.FC<PlayListProps> = ({ playlists, addPlaylist }) => {
+  return (
+    <div>
       <h2>Playlists</h2>
+      <PlayListForm addPlaylist={addPlaylist} />
       {playlists && playlists.length > 0 ? (
         <motion.div
           className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
@@ -23,9 +26,7 @@ const PlayList: React.FC<PlayListProps> = ({ playlists }) => {
               className="bg-white shadow-md rounded-lg p-4"
             >
               <h2 className="text-xl font-semibold mt-2">{playlist.name}</h2>
-              <button
-                className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary"
-              >
+              <button className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary">
                 Delete
               </button>
             </div>
@@ -37,7 +38,7 @@ const PlayList: React.FC<PlayListProps> = ({ playlists }) => {
         </p>
       )}
     </div>
-    );
+  );
 };
 
 export default PlayList;
