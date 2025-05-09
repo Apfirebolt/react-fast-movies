@@ -19,6 +19,16 @@ class Movie(Base):
 
     owner = relationship("User", back_populates="movies")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "year": self.year,
+            "title": self.title,
+            "imdbID": self.imdbID,
+            "type": self.type,
+            "poster": self.poster,
+        }
+
 
 class Playlist(Base):
     __tablename__ = "playlist"

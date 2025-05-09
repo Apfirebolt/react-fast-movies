@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
+from backend.movies.schema import MovieBase
 from pydantic import BaseModel, EmailStr
 
 
@@ -16,6 +17,13 @@ class UserDetail(BaseModel):
     username: str
     email: EmailStr
     role: str
+    movies: List[MovieBase]
 
     class Config:
         orm_mode = True
+
+
+class UserPayload(BaseModel):
+    username: str
+    email: EmailStr
+    role: Optional[str] = "user"

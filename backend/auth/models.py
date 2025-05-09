@@ -24,3 +24,12 @@ class User(Base):
 
     def check_password(self, password):
         return hashing.verify_password(self.password, password)
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "movies": [movie.to_dict() for movie in self.movies],
+        }
