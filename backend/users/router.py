@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, status, Response
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 import json
 
@@ -50,8 +51,8 @@ async def create_user(
     You can optionally provide a query parameter 'q' to filter results
     (though it doesn't actually do anything in this example).
     """
-    return Response(
-        content=json.dumps({
+    return JSONResponse(
+        content=({
             "data": user.dict(),
             "message": "User created successfully",
             "status": "success",
