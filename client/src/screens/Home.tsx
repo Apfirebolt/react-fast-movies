@@ -47,7 +47,7 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.detail);
       } else {
         toast.error("Failed to save movie.");
       }

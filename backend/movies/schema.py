@@ -2,6 +2,23 @@ from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr, HttpUrl
 
+class PlaylistBase(BaseModel):
+    name: str
+
+
+class PlayList(PlaylistBase):
+    id: int
+    createdDate: datetime
+    owner_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class MoviePlaylistBase(BaseModel):
+    movie_id: int
+    playlist_id: int
+
 
 class MovieBase(BaseModel):
     year: str
@@ -9,9 +26,6 @@ class MovieBase(BaseModel):
     imdbID: str
     type: str
     poster: Optional[HttpUrl] = None
-
-    class Config:
-        from_attributes = True
 
 
 class MovieCreate(MovieBase):
