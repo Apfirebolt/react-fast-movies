@@ -97,19 +97,19 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
   updatePlaylist: async (playlistData) => {
     try {
       const token = Cookie.get("user")
-        ? JSON.parse(Cookie.get("user") as string).token
+        ? JSON.parse(Cookie.get("user") as string).access_token
         : null;
       if (!token) {
         toast.error("User is not authenticated.");
         return;
       }
-
+      
       const response = await axios.put(
         `${API_URL}/playlists/${playlistData.id}`,
+        { name: playlistData.name },
         {
           headers: { Authorization: `Bearer ${token}` },
-        },
-        playlistData
+        }
       );
 
       if (response.status === 200) {
