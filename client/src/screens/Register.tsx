@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { FaUser, FaEnvelope, FaLock } from "react-icons/fa"; // Import icons
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import useAuthStore from "../stores/auth";
-import { motion } from "framer-motion"; // Import motion for animations
+import { motion } from "framer-motion";
+import Logo from "../assets/logo.png";
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -24,10 +25,10 @@ const Register: React.FC = () => {
   return (
     <div className="flex items-center justify-center bg-neutral-100">
       <motion.div
-        className="w-full max-w-md bg-white rounded shadow-md my-12"
-        initial={{ opacity: 0, x: -100 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -100 }}
+        className="w-full max-w-xxl bg-white rounded shadow-md"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.3 }}
       >
         <h2 className="text-2xl font-bold text-center text-light py-2 px-1 bg-tertiary">
@@ -40,7 +41,9 @@ const Register: React.FC = () => {
             className="w-36 h-32 rounded-full shadow-md"
           />
         </div>
-        <form onSubmit={handleSubmit} className="px-8">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="px-8">
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -108,15 +111,22 @@ const Register: React.FC = () => {
             Register
           </button>
         </form>
-        <p className="my-4 text-sm text-center text-gray-600">
-          Already have an account?{" "}
-          <a href="/login" className="text-tertiary hover:underline">
-            Login
-          </a>
-        </p>
+            <p className="mt-4 text-sm text-center text-gray-600">
+              Don't have an account?{" "}
+              <a href="/register" className="text-tertiary hover:underline">
+                Sign up
+              </a>
+            </p>
+          </div>
+          <div>
+            <img src={Logo} alt="Company Logo" className="logo" />
+          </div>
+        </div>
       </motion.div>
     </div>
+
   );
 };
 
 export default Register;
+

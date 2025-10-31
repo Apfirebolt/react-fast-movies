@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuthStore from "../stores/auth";
 import { FaBars } from "react-icons/fa";
+import Logo from '../assets/logo.png';
 import { motion, AnimatePresence } from "framer-motion";
 
 const Header: React.FC = () => {
@@ -9,7 +10,7 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-primary text-white">
+    <header className="bg-white text-primary">
       <aside>
         <div className="md:hidden py-3 px-2">
           <button
@@ -77,33 +78,34 @@ const Header: React.FC = () => {
         </div>
       </aside>
       <div className="container hidden md:flex mx-auto justify-between items-center py-4 px-6">
+        <img src={Logo} alt="Company Logo" className="logo-style" />
         <h1 className="text-2xl font-bold">
-          <Link to="/">Fast React Movies</Link>
+          <Link to="/">Monstella</Link>
         </h1>
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link to="/" className="hover:text-light transition-all duration-200 hover:text-xl">
+              <Link to="/" className="hover:text-dark transition-all duration-200 hover:text-xl">
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-light transition-all duration-200 hover:text-xl">
+              <Link to="/about" className="hover:text-dark transition-all duration-200 hover:text-xl">
                 About
               </Link>
             </li>
             {user ? (
               <>
-                <li className="hover:text-light">Welcome, {user.user.email}</li>
+                <li className="hover:text-dark">Welcome, {user.user.email}</li>
                 <li>
-                  <Link to="/dashboard" className="hover:text-light transition-all duration-200 hover:text-xl">
+                  <Link to="/dashboard" className="hover:text-dark transition-all duration-200 hover:text-xl">
                     Dashboard
                   </Link>
                 </li>
                 <li>
                   <button
                     onClick={logout}
-                    className="hover:text-light focus:outline-none transition-all duration-200 hover:text-xl"
+                    className="hover:text-dark focus:outline-none transition-all duration-200 hover:text-xl"
                   >
                     Logout
                   </button>
@@ -112,12 +114,12 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/login" className="hover:text-light">
+                  <Link to="/login" className="hover:text-dark">
                     Login
                   </Link>
                 </li>
                 <li>
-                  <Link to="/register" className="hover:text-light">
+                  <Link to="/register" className="hover:text-dark">
                     Register
                   </Link>
                 </li>

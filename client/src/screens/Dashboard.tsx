@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 import Content from "../components/Content";
 import MoviesList from "../components/Movies";
 import PlayList from "../components/PlayList";
+import { FaSave, FaEye } from "react-icons/fa";
 
 const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -110,7 +111,7 @@ const Dashboard: React.FC = () => {
       favorite movies, and explore personalized recommendations."
       />
 
-      <div className="flex justify-between items-center my-4">
+      <div className="flex justify-between items-center">
         <input
           type="text"
           placeholder="Search for movies..."
@@ -126,8 +127,9 @@ const Dashboard: React.FC = () => {
               selectedTab === "movies"
                 ? "bg-primary text-white"
                 : "bg-gray-200 text-black"
-            } rounded-md shadow-md`}
+            } rounded-md shadow-md flex items-center justify-around`}
           >
+            <FaSave className="mx-1" />
             Saved Movies
           </button>
           <button
@@ -136,8 +138,9 @@ const Dashboard: React.FC = () => {
               selectedTab === "playlist"
                 ? "bg-primary text-white"
                 : "bg-gray-200 text-black"
-            } rounded-md shadow-md`}
+            } rounded-md shadow-md flex items-center justify-around`}
           >
+            <FaEye className="mx-1" />
             Playlist
           </button>
         </div>
