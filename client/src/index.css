@@ -19,6 +19,16 @@ h2 {
   font-weight: 700;
 }
 
+.logo-style {
+  height: 100px;
+  width: 350px;
+}
+
+.logo {
+  height: 300px;
+  width: 500px;
+}
+
 @theme {
   --color-primary: #3D0301;
   --color-secondary: #B03052;

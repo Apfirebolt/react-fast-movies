@@ -10,7 +10,6 @@ const PlayListForm: React.FC<PlayListFormProps> = ({ addPlaylist }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Playlist Name:", playlistName);
     setPlaylistName("");
     // api call to add playlist
     addPlaylist(playlistName);
@@ -39,12 +38,15 @@ const PlayListForm: React.FC<PlayListFormProps> = ({ addPlaylist }) => {
             />
           </div>
         </div>
-        <button
-          type="submit"
-          className="mx-auto px-4 py-2 text-white bg-tertiary rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          Create Playlist
-        </button>
+        <div>
+          <button
+            type="submit"
+            className="mx-auto px-4 py-2 text-white flex justify-around items-center bg-tertiary rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <FaPlus className="mx-1" />
+            Create Playlist
+          </button>
+        </div>
       </form>
     </div>
   );

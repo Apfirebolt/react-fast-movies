@@ -7,11 +7,13 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ title, content }) => {
   return (
-    <div className="w-full mx-auto">
-      <h1 className="text-4xl text-tertiary bg-white shadow-lg px-4 py-3">{title}</h1>
-      <p style={{ fontSize: "1.5rem", margin: "0.5rem 0" }}>{content}</p>
+    <div className="w-full mx-auto p-2">
+      <h1 className="text-4xl text-tertiary text-center bg-white shadow-lg px-4 py-3">{title}</h1>
+      <p className="my-2 text-lg">{content}</p>
     </div>
   );
 };
 
 export default Content;
+
+
