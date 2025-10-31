@@ -12,7 +12,7 @@ class PlayList(PlaylistBase):
     owner_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class MoviePlaylistBase(BaseModel):
@@ -52,4 +52,4 @@ class UserSchema(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -97,7 +97,7 @@ const Dashboard: React.FC = () => {
   const addPlaylistUtil = async (playlist: any) => {
     await addPlaylist(playlist);
     await fetchPlaylists();
-  }
+  };
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
@@ -122,13 +122,15 @@ const Dashboard: React.FC = () => {
       />
 
       <div className="flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Search for movies..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border rounded-md w-full sm:w-1/2"
-        />
+        {selectedTab === "movies" && (
+          <input
+            type="text"
+            placeholder="Search for movies..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 border rounded-md w-full sm:w-1/2"
+          />
+        )}
 
         <div className="flex justify-center my-4">
           <button
