@@ -38,7 +38,7 @@ const Header: React.FC = () => {
       <aside>
         <div className="md:hidden py-3 px-2">
           <button
-            className="text-white focus:outline-none"
+            className="focus:outline-none"
             onClick={() => setIsMenuOpen((prev) => !prev)}
           >
             <FaBars size={24} />
