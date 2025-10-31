@@ -11,6 +11,10 @@ interface Movie {
   releaseDate: string;
 }
 
+interface Error {
+  message: string;
+}
+
 interface MovieState {
   movies: Movie[];
   fetchMovies: () => Promise<void>;
@@ -41,7 +45,8 @@ const useMovieStore = create<MovieState>((set, get) => ({
       if (response.status === 200) {
         set({ movies: response.data });
       }
-    } catch (error) {
+    } catch (error: Error | any) {
+      console.log(error);
       toast.error("Failed to fetch movies.");
     }
   },
@@ -66,7 +71,8 @@ const useMovieStore = create<MovieState>((set, get) => ({
         set({ movies: [...get().movies, response.data] });
         toast.success("Movie added successfully!");
       }
-    } catch (error) {
+    } catch (error: Error | any) {
+      console.log(error);
       toast.error("Failed to add movie.");
     }
   },
@@ -88,7 +94,8 @@ const useMovieStore = create<MovieState>((set, get) => ({
         set({ movies: get().movies.filter((movie) => movie.id !== movieId) });
         toast.success("Movie deleted successfully!");
       }
-    } catch (error) {
+    } catch (error: Error | any) {
+      console.log(error);
       toast.error("Failed to delete movie.");
     }
   },

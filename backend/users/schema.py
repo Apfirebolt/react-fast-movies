@@ -9,7 +9,7 @@ class UserList(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserDetail(BaseModel):
@@ -20,7 +20,7 @@ class UserDetail(BaseModel):
     movies: List[MovieBase]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserPayload(BaseModel):

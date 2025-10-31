@@ -89,6 +89,16 @@ const Dashboard: React.FC = () => {
     setLoading(false);
   };
 
+  const deletePlaylistUtil = async (playlistId: number) => {
+    await deletePlaylist(playlistId);
+    await fetchPlaylists();
+  };
+
+  const addPlaylistUtil = async (playlist: any) => {
+    await addPlaylist(playlist);
+    await fetchPlaylists();
+  };
+
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
     setSearchQuery("");
@@ -112,13 +122,15 @@ const Dashboard: React.FC = () => {
       />
 
       <div className="flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Search for movies..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border rounded-md w-full sm:w-1/2"
-        />
+        {selectedTab === "movies" && (
+          <input
+            type="text"
+            placeholder="Search for movies..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 border rounded-md w-full sm:w-1/2"
+          />
+        )}
 
         <div className="flex justify-center my-4">
           <button
@@ -155,7 +167,13 @@ const Dashboard: React.FC = () => {
       {selectedTab === "movies" && (
         <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
       )}
-      {selectedTab === "playlist" && <PlayList playlists={playlists} addPlaylist={addPlaylist} deletePlaylist={deletePlaylist} />}
+      {selectedTab === "playlist" && (
+        <PlayList
+          playlists={playlists}
+          addPlaylist={addPlaylistUtil}
+          deletePlaylist={deletePlaylistUtil}
+        />
+      )}
     </div>
   );
 };

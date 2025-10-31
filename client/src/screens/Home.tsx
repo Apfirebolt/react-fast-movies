@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Content from "../components/Content";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaEye, FaSave } from "react-icons/fa";
 import type { Movies, MovieDetails } from "../types/Movie";
 import useAuthStore from "../stores/auth";
 import { toast } from "react-toastify";
@@ -138,18 +138,22 @@ const Home: React.FC = () => {
                 alt={movie.Title}
                 className="w-full h-auto mt-2 rounded-md"
               />
-              <button
-                onClick={() => goToMovieDetails(movie.imdbID)}
-                className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md hover:bg-blue-600"
-              >
-                View Details
-              </button>
-              <button
-                onClick={() => saveMovie(movie)}
-                className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md hover:bg-green-600"
-              >
-                Save Movie
-              </button>
+              <div className="flex">
+                <button
+                  onClick={() => goToMovieDetails(movie.imdbID)}
+                  className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md flex items-center hover:bg-blue-600"
+                >
+                  <FaEye className="mx-1" />
+                  View Details
+                </button>
+                <button
+                  onClick={() => saveMovie(movie)}
+                  className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md flex items-center hover:bg-green-600"
+                >
+                  <FaSave className="mx-1" />
+                  Save Movie
+                </button>
+              </div>
             </div>
           ))}
         </div>
