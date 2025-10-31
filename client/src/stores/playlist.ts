@@ -8,11 +8,9 @@ import Cookie from "js-cookie";
 interface PlaylistState {
   playlists: Playlist[];
   fetchPlaylists: () => Promise<void>;
-  addPlaylist: (playlistData: {
-    name: string;
-    description: string;
-  }) => Promise<void>;
+  addPlaylist: (playlistName: string) => Promise<void>;
   deletePlaylist: (playlistId: string) => Promise<void>;
+  updatePlaylist: (playlistData: { name: string }) => Promise<void>;
 }
 
 const usePlaylistStore = create<PlaylistState>((set, get) => ({
@@ -38,22 +36,26 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       toast.error("Failed to fetch playlists.");
     }
   },
-  addPlaylist: async (playlistData) => {
+  addPlaylist: async (playlistName: string) => {
     try {
       const token = Cookie.get("user")
-        ? JSON.parse(Cookie.get("user") as string).token
+        ? JSON.parse(Cookie.get("user") as string).access_token
         : null;
       if (!token) {
         toast.error("User is not authenticated.");
         return;
       }
 
-      const response = await axios.post(`${API_URL}/playlists`, playlistData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        `${API_URL}/playlists`,
+        { name: playlistName },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status === 201) {
         set({ playlists: [...get().playlists, response.data] });
@@ -66,7 +68,7 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
   deletePlaylist: async (playlistId) => {
     try {
       const token = Cookie.get("user")
-        ? JSON.parse(Cookie.get("user") as string).token
+        ? JSON.parse(Cookie.get("user") as string).access_token
         : null;
       if (!token) {
         toast.error("User is not authenticated.");
@@ -87,6 +89,36 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
           ),
         });
         toast.success("Playlist deleted successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to delete playlist.");
+    }
+  },
+  updatePlaylist: async (playlistData) => {
+    try {
+      const token = Cookie.get("user")
+        ? JSON.parse(Cookie.get("user") as string).token
+        : null;
+      if (!token) {
+        toast.error("User is not authenticated.");
+        return;
+      }
+
+      const response = await axios.put(
+        `${API_URL}/playlists/${playlistData.id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        playlistData
+      );
+
+      if (response.status === 200) {
+        set({
+          playlists: get().playlists.filter(
+            (playlist) => playlist.id !== playlistData.id
+          ),
+        });
+        toast.success("Playlist updated successfully!");
       }
     } catch (error) {
       toast.error("Failed to delete playlist.");

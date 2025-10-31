@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import useAuthStore from "../stores/auth";
+import usePlaylistStore from "../stores/playlist";
 import { Movie, Movies } from "../types/Movie";
 import type { Playlist } from "../types/Playlist";
 import { API_URL } from "../config";
@@ -18,6 +19,7 @@ const Dashboard: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuthStore();
+  const { deletePlaylist, addPlaylist } = usePlaylistStore();
 
   const fetchMovies = async () => {
     try {
@@ -60,35 +62,6 @@ const Dashboard: React.FC = () => {
         toast.error("Session expired. Please log in again.");
       }
       setError("Failed to fetch playlists. Please try again.");
-    }
-    setLoading(false);
-  };
-
-  const addPlaylist = async (playlistName: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await axios.post(
-        `${API_URL}/playlists`,
-        { name: playlistName },
-        {
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.status === 201) {
-        toast.dismiss();
-        toast.success("Playlist created successfully.");
-        await fetchPlaylists();
-      }
-    } catch (err) {
-      if (err.status === 401) {
-        toast.dismiss();
-        toast.error("Session expired. Please log in again.");
-      }
-      setError("Failed to create playlist. Please try again.");
     }
     setLoading(false);
   };
@@ -179,7 +152,7 @@ const Dashboard: React.FC = () => {
       {selectedTab === "movies" && (
         <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
       )}
-      {selectedTab === "playlist" && <PlayList playlists={playlists} addPlaylist={addPlaylist} />}
+      {selectedTab === "playlist" && <PlayList playlists={playlists} addPlaylist={addPlaylist} deletePlaylist={deletePlaylist} />}
     </div>
   );
 };
