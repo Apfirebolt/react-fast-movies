@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Slider from "react-slick";
 import { motion, AnimatePresence } from "framer-motion";
 // import next and prev icons from react-icons
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
@@ -100,6 +101,16 @@ const About: React.FC = () => {
               />
             ))}
           </div>
+        </div>
+        <div className="w-full mt-8">
+          <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
+            {slides.map((slide, index) => (
+              <div key={index} className="p-4 bg-primary text-accent rounded-lg">
+                <h3 className="text-xl font-semibold mb-2">{slide.title}</h3>
+                <p>{slide.content}</p>
+              </div>
+            ))}
+          </Slider>
         </div>
       </div>
     </div>
