@@ -4,16 +4,23 @@ import { motion } from "framer-motion";
 import PlayListForm from "./PlayListForm";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
+interface Playlist {
+  id: number;
+  name: string;
+}
+
 interface PlayListProps {
   playlists: Playlist[];
   addPlaylist: (name: string) => void;
   deletePlaylist: (id: number) => void;
+  openEditModal: (playlist: Playlist) => void;
 }
 
 const PlayList: React.FC<PlayListProps> = ({
   playlists,
   addPlaylist,
   deletePlaylist,
+  openEditModal
 }) => {
   return (
     <div>
@@ -40,7 +47,7 @@ const PlayList: React.FC<PlayListProps> = ({
                   <FaTrash />
                   Delete
                 </button>
-                <button className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
+                <button onClick={() => openEditModal(playlist)} className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
                   <FaEdit />
                   Edit
                 </button>

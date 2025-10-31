@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 import useAuthStore from "../stores/auth";
 import usePlaylistStore from "../stores/playlist";
 import { Movie, Movies } from "../types/Movie";
@@ -9,18 +10,32 @@ import { API_URL } from "../config";
 import Loader from "../components/Loader";
 import Content from "../components/Content";
 import MoviesList from "../components/Movies";
+import PlayListFormModal from "../components/PlayListFormModal";
 import PlayList from "../components/PlayList";
-import { FaSave, FaEye } from "react-icons/fa";
+import { FaSave, FaEye, FaTimes } from "react-icons/fa";
 
 const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedTab, setSelectedTab] = useState<string>("movies");
+  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
+    null
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuthStore();
-  const { deletePlaylist, addPlaylist } = usePlaylistStore();
+  const { deletePlaylist, addPlaylist, updatePlaylist } = usePlaylistStore();
+
+  const openEditModal = (playlist: Playlist) => {
+    setSelectedPlaylist(playlist);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
 
   const fetchMovies = async () => {
     try {
@@ -99,6 +114,12 @@ const Dashboard: React.FC = () => {
     await fetchPlaylists();
   };
 
+  const updatePlaylistUtil = async (playlistData: any) => {
+    await updatePlaylist(playlistData);
+    await fetchPlaylists();
+    closeEditModal();
+  };
+
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
     setSearchQuery("");
@@ -172,8 +193,44 @@ const Dashboard: React.FC = () => {
           playlists={playlists}
           addPlaylist={addPlaylistUtil}
           deletePlaylist={deletePlaylistUtil}
+          openEditModal={openEditModal}
         />
       )}
+
+      {/* Playlist Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={closeEditModal}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 500 }}
+              className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={closeEditModal}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              >
+                <FaTimes size={20} />
+              </button>
+              <PlayListFormModal
+                addPlaylist={addPlaylistUtil}
+                updatePlaylist={updatePlaylistUtil}
+                playlist={selectedPlaylist}
+                onClose={closeEditModal}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
