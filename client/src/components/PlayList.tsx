@@ -2,14 +2,19 @@ import React from "react";
 import type { Playlist } from "../types/Playlist";
 import { motion } from "framer-motion";
 import PlayListForm from "./PlayListForm";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface PlayListProps {
   playlists: Playlist[];
   addPlaylist: (name: string) => void;
-  deletePlaylist: (id: number) => void
+  deletePlaylist: (id: number) => void;
 }
 
-const PlayList: React.FC<PlayListProps> = ({ playlists, addPlaylist, deletePlaylist }) => {
+const PlayList: React.FC<PlayListProps> = ({
+  playlists,
+  addPlaylist,
+  deletePlaylist,
+}) => {
   return (
     <div>
       <h2>Playlists</h2>
@@ -24,15 +29,22 @@ const PlayList: React.FC<PlayListProps> = ({ playlists, addPlaylist, deletePlayl
           {playlists.map((playlist: Playlist) => (
             <div
               key={playlist.id}
-              className="bg-white shadow-md rounded-lg p-4"
+              className="bg-white shadow-md rounded-lg"
             >
-              <h2 className="text-xl font-semibold mt-2">{playlist.name}</h2>
-              <button onClick={() => deletePlaylist(playlist.id)} className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary">
-                Delete
-              </button>
-              <button className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary">
-                Edit
-              </button>
+              <h2 className="text-xl font-semibold mt-2 text-light bg-primary text-center">{playlist.name}</h2>
+              <div className="flex items-center p-4">
+                <button
+                  onClick={() => deletePlaylist(playlist.id)}
+                  className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2"
+                >
+                  <FaTrash />
+                  Delete
+                </button>
+                <button className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
+                  <FaEdit />
+                  Edit
+                </button>
+              </div>
             </div>
           ))}
         </motion.div>

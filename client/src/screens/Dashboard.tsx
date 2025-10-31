@@ -89,6 +89,16 @@ const Dashboard: React.FC = () => {
     setLoading(false);
   };
 
+  const deletePlaylistUtil = async (playlistId: number) => {
+    await deletePlaylist(playlistId);
+    await fetchPlaylists();
+  };
+
+  const addPlaylistUtil = async (playlist: any) => {
+    await addPlaylist(playlist);
+    await fetchPlaylists();
+  }
+
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab);
     setSearchQuery("");
@@ -155,7 +165,13 @@ const Dashboard: React.FC = () => {
       {selectedTab === "movies" && (
         <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
       )}
-      {selectedTab === "playlist" && <PlayList playlists={playlists} addPlaylist={addPlaylist} deletePlaylist={deletePlaylist} />}
+      {selectedTab === "playlist" && (
+        <PlayList
+          playlists={playlists}
+          addPlaylist={addPlaylistUtil}
+          deletePlaylist={deletePlaylistUtil}
+        />
+      )}
     </div>
   );
 };

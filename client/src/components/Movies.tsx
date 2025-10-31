@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import type { Movie } from "../types/Movie";
+import { FaTrash } from "react-icons/fa";
 
 interface MovieListProps {
   movies: Movie[];
@@ -32,8 +33,9 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
               <p className="text-gray-600">{movie.year}</p>
               <button
                 onClick={() => deleteMovie(movie)}
-                className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary"
+                className="mt-2 px-4 py-2 bg-secondary text-white rounded-md flex items-center shadow-md hover:bg-primary"
               >
+                <FaTrash className="inline-block mr-2" />
                 Delete
               </button>
             </div>

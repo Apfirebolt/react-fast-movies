@@ -1,13 +1,37 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import useAuthStore from "../stores/auth";
 import { FaBars } from "react-icons/fa";
-import Logo from '../assets/logo.png';
+import Logo from "../assets/logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Header: React.FC = () => {
   const { user, logout } = useAuthStore();
+  const [selectedTab, setSelectedTab] = useState<string>("home");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === "/") setSelectedTab("home");
+    else if (path === "/about") setSelectedTab("about");
+    else if (path === "/dashboard") setSelectedTab("dashboard");
+    else if (path === "/login") setSelectedTab("login");
+    else if (path === "/register") setSelectedTab("register");
+  }, [location.pathname]);
+
+  const getLinkStyles = (tabName: string) => {
+    const baseStyles =
+      "hover:text-dark transition-all duration-200 hover:text-xl";
+    const activeStyles = selectedTab === tabName ? "font-bold underline" : "";
+    return `${baseStyles} ${activeStyles}`;
+  };
+
+  const getMobileLinkStyles = (tabName: string) => {
+    const baseStyles = "hover:text-light";
+    const activeStyles = selectedTab === tabName ? "font-bold underline" : "";
+    return `${baseStyles} ${activeStyles}`;
+  };
 
   return (
     <header className="bg-white text-primary">
@@ -31,20 +55,25 @@ const Header: React.FC = () => {
               >
                 <ul className="flex flex-col space-y-4 p-4">
                   <li className="bg-secondary p-2 rounded-md">
-                    <Link to="/" className="hover:text-light">
+                    <Link to="/" className={getMobileLinkStyles("home")}>
                       Home
                     </Link>
                   </li>
                   <li className="bg-secondary p-2 rounded-md">
-                    <Link to="/about" className="hover:text-light">
+                    <Link to="/about" className={getMobileLinkStyles("about")}>
                       About
                     </Link>
                   </li>
                   {user ? (
                     <>
-                      <li className="hover:text-light">Welcome, {user?.user?.email}</li>
+                      <li className="hover:text-light">
+                        Welcome, {user?.user?.email}
+                      </li>
                       <li className="bg-secondary p-2 rounded-md">
-                        <Link to="/dashboard" className="hover:text-light">
+                        <Link
+                          to="/dashboard"
+                          className={getMobileLinkStyles("dashboard")}
+                        >
                           Dashboard
                         </Link>
                       </li>
@@ -60,12 +89,18 @@ const Header: React.FC = () => {
                   ) : (
                     <>
                       <li className="bg-secondary p-2 rounded-md">
-                        <Link to="/login" className="hover:text-light">
+                        <Link
+                          to="/login"
+                          className={getMobileLinkStyles("login")}
+                        >
                           Login
                         </Link>
                       </li>
                       <li className="bg-secondary p-2 rounded-md">
-                        <Link to="/register" className="hover:text-light">
+                        <Link
+                          to="/register"
+                          className={getMobileLinkStyles("register")}
+                        >
                           Register
                         </Link>
                       </li>
@@ -77,7 +112,7 @@ const Header: React.FC = () => {
           </AnimatePresence>
         </div>
       </aside>
-      <div className="container hidden md:flex mx-auto justify-between items-center py-4 px-6">
+      <div className="container hidden md:flex mx-auto justify-between items-center px-6">
         <img src={Logo} alt="Company Logo" className="logo-style" />
         <h1 className="text-2xl font-bold">
           <Link to="/">Monstella</Link>
@@ -85,12 +120,12 @@ const Header: React.FC = () => {
         <nav>
           <ul className="flex space-x-6">
             <li>
-              <Link to="/" className="hover:text-dark transition-all duration-200 hover:text-xl">
+              <Link to="/" className={getLinkStyles("home")}>
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/about" className="hover:text-dark transition-all duration-200 hover:text-xl">
+              <Link to="/about" className={getLinkStyles("about")}>
                 About
               </Link>
             </li>
@@ -98,7 +133,7 @@ const Header: React.FC = () => {
               <>
                 <li className="hover:text-dark">Welcome, {user.user.email}</li>
                 <li>
-                  <Link to="/dashboard" className="hover:text-dark transition-all duration-200 hover:text-xl">
+                  <Link to="/dashboard" className={getLinkStyles("dashboard")}>
                     Dashboard
                   </Link>
                 </li>
@@ -114,12 +149,12 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <li>
-                  <Link to="/login" className="hover:text-dark">
+                  <Link to="/login" className={getLinkStyles("login")}>
                     Login
                   </Link>
                 </li>
                 <li>
-                  <Link to="/register" className="hover:text-dark">
+                  <Link to="/register" className={getLinkStyles("register")}>
                     Register
                   </Link>
                 </li>
