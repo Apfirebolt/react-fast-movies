@@ -12,6 +12,7 @@ import Loader from "../components/Loader";
 import Content from "../components/Content";
 import MoviesList from "../components/Movies";
 import PlayListFormModal from "../components/PlayListFormModal";
+import PlaylistModal from "../components/PlayListModal";
 import ConfirmModal from "../components/ConfirmModal";
 import PlayList from "../components/PlayList";
 import { FaSave, FaEye, FaTimes } from "react-icons/fa";
@@ -24,6 +25,7 @@ const Dashboard: React.FC = () => {
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -91,7 +93,6 @@ const Dashboard: React.FC = () => {
   };
 
   const deleteMovieUtil = async (movieId: number) => {
-    console.log('Movie id to delete:', movieId);
     await deleteMovie(movieId);
     await fetchMovies();
   }
@@ -120,6 +121,14 @@ const Dashboard: React.FC = () => {
   const openDeleteConfirmModal = (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
     setIsConfirmModalOpen(true);
+  };
+
+  const openPlaylistModal = () => {
+    setIsPlaylistModalOpen(true);
+  }
+
+  const closePlaylistModal = () => {
+    setIsPlaylistModalOpen(false);
   };
 
   const filteredMovies = movies?.filter((movie) =>
@@ -242,7 +251,7 @@ const Dashboard: React.FC = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.4 }}
           >
-            <MoviesList movies={filteredMovies} deleteMovie={deleteMovieUtil} />
+            <MoviesList movies={filteredMovies} deleteMovie={deleteMovieUtil} openPlaylistModal={openPlaylistModal} />
           </motion.div>
         )}
         {selectedTab === "playlist" && (
@@ -338,6 +347,40 @@ const Dashboard: React.FC = () => {
                 cancelAction={() => setIsConfirmModalOpen(false)}
                 confirmText="Delete"
                 cancelText="Cancel"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Playlist Modal */}
+      <AnimatePresence>
+        {isPlaylistModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={closePlaylistModal}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 500 }}
+              className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.button
+                onClick={closePlaylistModal}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaTimes size={20} />
+              </motion.button>
+              <PlaylistModal
+                playlists={playlists}
               />
             </motion.div>
           </motion.div>

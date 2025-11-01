@@ -86,13 +86,11 @@ const useMovieStore = create<MovieState>((set, get) => ({
         return;
       }
 
-      console.log('Before api call to delete movie with id:', movieId);
-
       const response = await axios.delete(`${API_URL}/movies/${movieId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (response.status === 200) {
+      if (response.status === 204) {
         set({ movies: get().movies.filter((movie) => movie.id !== movieId) });
         toast.success("Movie deleted successfully!");
       }

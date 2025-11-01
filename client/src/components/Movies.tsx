@@ -1,14 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
 import type { Movie } from "../types/Movie";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaPlusCircle } from "react-icons/fa";
 
 interface MovieListProps {
   movies: Movie[];
   deleteMovie: (id: string) => void;
+  openPlaylistModal: () => void;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies, deleteMovie }) => {
+const MovieList: React.FC<MovieListProps> = ({
+  movies,
+  deleteMovie,
+  openPlaylistModal,
+}) => {
   return (
     <div>
       <h2>Movies</h2>
@@ -22,7 +27,7 @@ const MovieList: React.FC<MovieListProps> = ({ movies, deleteMovie }) => {
           {movies.map((movie: Movie) => (
             <div
               key={movie.imdbID}
-              className="bg-white shadow-md rounded-lg p-4"
+              className="bg-white shadow-md rounded-lg p-2"
             >
               <img
                 src={movie.poster}
@@ -31,13 +36,22 @@ const MovieList: React.FC<MovieListProps> = ({ movies, deleteMovie }) => {
               />
               <h2 className="text-xl font-semibold mt-2">{movie.title}</h2>
               <p className="text-gray-600">{movie.year}</p>
-              <button
-                onClick={() => deleteMovie(movie.id)}
-                className="mt-2 px-4 py-2 bg-secondary text-white rounded-md flex items-center shadow-md hover:bg-primary"
-              >
-                <FaTrash className="inline-block mr-2" />
-                Delete
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => deleteMovie(movie.id)}
+                  className="px-4 py-2 bg-secondary text-white rounded-md flex items-center shadow-md hover:bg-primary"
+                >
+                  <FaTrash className="inline-block mr-2" />
+                  Delete
+                </button>
+                <button
+                  onClick={() => openPlaylistModal(movie.id)}
+                  className="px-4 py-2 bg-info text-black rounded-md flex items-center shadow-md hover:bg-primary hover:text-white transition-colors duration-200"
+                >
+                  <FaPlusCircle className="inline-block mr-2" />
+                  Add to Playlist
+                </button>
+              </div>
             </div>
           ))}
         </motion.div>

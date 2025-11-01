@@ -98,7 +98,7 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center bg-light p-4">
       <Content
-        title="Welcome to Movie Finder"
+        title="Search Movies"
         content="Discover the latest movies, explore your favorites, and enjoy a seamless browsing experience."
       />
       <div className="mb-4 flex justify-center items-center w-1/2">

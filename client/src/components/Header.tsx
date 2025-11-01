@@ -145,13 +145,13 @@ const Header: React.FC = () => {
             {user ? (
               <>
                 <li className="relative" ref={dropdownRef}>
-                  <button
+                    <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className="hover:text-dark flex items-center gap-1 focus:outline-none transition-all duration-200"
-                  >
-                    Welcome, {user.user.email}
+                    >
+                    Welcome, {user?.user?.email}
                     <FaChevronDown className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
+                    </button>
                   <AnimatePresence>
                     {isDropdownOpen && (
                       <motion.div
