@@ -11,6 +11,7 @@ import Loader from "../components/Loader";
 import Content from "../components/Content";
 import MoviesList from "../components/Movies";
 import PlayListFormModal from "../components/PlayListFormModal";
+import ConfirmModal from "../components/ConfirmModal";
 import PlayList from "../components/PlayList";
 import { FaSave, FaEye, FaTimes } from "react-icons/fa";
 
@@ -21,6 +22,7 @@ const Dashboard: React.FC = () => {
     null
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -35,6 +37,10 @@ const Dashboard: React.FC = () => {
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
   };
 
   const fetchMovies = async () => {
@@ -125,6 +131,11 @@ const Dashboard: React.FC = () => {
     setSearchQuery("");
   };
 
+  const openDeleteConfirmModal = (playlist: Playlist) => {
+    setSelectedPlaylist(playlist);
+    setIsConfirmModalOpen(true);
+  };
+
   const filteredMovies = movies?.filter((movie) =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -135,67 +146,136 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-light p-4">
-      <Content
-        title="Welcome to Your Dashboard"
-        content="Welcome to your dashboard! Here you can manage your account, track your
+    <motion.div
+      className="bg-light p-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.5 }}
+      >
+        <Content
+          title="Welcome to Your Dashboard"
+          content="Welcome to your dashboard! Here you can manage your account, track your
       favorite movies, and explore personalized recommendations."
-      />
+        />
+      </motion.div>
 
-      <div className="flex justify-between items-center">
+      <motion.div
+        className="flex justify-between items-center"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+      >
         {selectedTab === "movies" && (
-          <input
+          <motion.input
             type="text"
             placeholder="Search for movies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="p-2 border rounded-md w-full sm:w-1/2"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
           />
         )}
 
-        <div className="flex justify-center my-4">
-          <button
+        <motion.div
+          className="flex justify-center my-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <motion.button
             onClick={() => handleTabChange("movies")}
             className={`px-4 py-2 mx-2 ${
               selectedTab === "movies"
                 ? "bg-primary text-white"
                 : "bg-gray-200 text-black"
             } rounded-md shadow-md flex items-center justify-around`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <FaSave className="mx-1" />
             Saved Movies
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={() => handleTabChange("playlist")}
             className={`px-4 py-2 mx-2 ${
               selectedTab === "playlist"
                 ? "bg-primary text-white"
                 : "bg-gray-200 text-black"
             } rounded-md shadow-md flex items-center justify-around`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
             <FaEye className="mx-1" />
             Playlist
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
 
-      {loading && <Loader />}
-      {error && (
-        <p className="text-lg text-secondary text-center border-2 border-primary px-2 py-3">
-          {error}
-        </p>
-      )}
-      {selectedTab === "movies" && (
-        <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
-      )}
-      {selectedTab === "playlist" && (
-        <PlayList
-          playlists={playlists}
-          addPlaylist={addPlaylistUtil}
-          deletePlaylist={deletePlaylistUtil}
-          openEditModal={openEditModal}
-        />
-      )}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Loader />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            className="text-lg text-secondary text-center border-2 border-primary px-2 py-3"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence mode="wait">
+        {selectedTab === "movies" && (
+          <motion.div
+            key="movies"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.4 }}
+          >
+            <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
+          </motion.div>
+        )}
+        {selectedTab === "playlist" && (
+          <motion.div
+            key="playlist"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.4 }}
+          >
+            <PlayList
+              playlists={playlists}
+              addPlaylist={addPlaylistUtil}
+              deletePlaylist={openDeleteConfirmModal}
+              openEditModal={openEditModal}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Playlist Modal */}
       <AnimatePresence>
@@ -215,12 +295,14 @@ const Dashboard: React.FC = () => {
               className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
+              <motion.button
                 onClick={closeEditModal}
                 className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
                 <FaTimes size={20} />
-              </button>
+              </motion.button>
               <PlayListFormModal
                 addPlaylist={addPlaylistUtil}
                 updatePlaylist={updatePlaylistUtil}
@@ -231,7 +313,51 @@ const Dashboard: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+
+      {/* Confirm Modal */}
+      <AnimatePresence>
+        {isConfirmModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            onClick={closeConfirmModal}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 500 }}
+              className="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.button
+                onClick={close}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <FaTimes size={20} />
+              </motion.button>
+              <ConfirmModal
+                isOpen={isConfirmModalOpen}
+                message="Are you sure you want to delete this playlist? This action cannot be undone."
+                confirmAction={async () => {
+                  if (selectedPlaylist) {
+                    await deletePlaylistUtil(selectedPlaylist.id);
+                    setIsConfirmModalOpen(false);
+                  }
+                }}
+                cancelAction={() => setIsConfirmModalOpen(false)}
+                confirmText="Delete"
+                cancelText="Cancel"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

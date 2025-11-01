@@ -5,14 +5,17 @@ import PlayListForm from "./PlayListForm";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 interface Playlist {
-  id: number;
+  id: string;
   name: string;
 }
 
 interface PlayListProps {
   playlists: Playlist[];
   addPlaylist: (name: string) => void;
-  deletePlaylist: (id: number) => void;
+  deletePlaylist: (payload : {
+    id: string,
+    name?: string 
+  }) => void;
   openEditModal: (playlist: Playlist) => void;
 }
 
@@ -41,7 +44,7 @@ const PlayList: React.FC<PlayListProps> = ({
               <h2 className="text-xl font-semibold mt-2 text-light bg-primary text-center">{playlist.name}</h2>
               <div className="flex items-center p-4">
                 <button
-                  onClick={() => deletePlaylist(playlist.id)}
+                  onClick={() => deletePlaylist({ id: playlist.id, name: playlist.name })}
                   className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2"
                 >
                   <FaTrash />
