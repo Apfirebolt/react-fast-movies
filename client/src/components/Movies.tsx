@@ -5,10 +5,10 @@ import { FaTrash } from "react-icons/fa";
 
 interface MovieListProps {
   movies: Movie[];
-  deleteMovie: (movie: Movie) => void;
+  deleteMovie: (id: string) => void;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ movies }) => {
+const MovieList: React.FC<MovieListProps> = ({ movies, deleteMovie }) => {
   return (
     <div>
       <h2>Movies</h2>
@@ -32,7 +32,7 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
               <h2 className="text-xl font-semibold mt-2">{movie.title}</h2>
               <p className="text-gray-600">{movie.year}</p>
               <button
-                onClick={() => deleteMovie(movie)}
+                onClick={() => deleteMovie(movie.id)}
                 className="mt-2 px-4 py-2 bg-secondary text-white rounded-md flex items-center shadow-md hover:bg-primary"
               >
                 <FaTrash className="inline-block mr-2" />

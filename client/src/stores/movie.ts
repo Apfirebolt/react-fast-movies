@@ -79,12 +79,14 @@ const useMovieStore = create<MovieState>((set, get) => ({
   deleteMovie: async (movieId) => {
     try {
       const token = Cookie.get("user")
-        ? JSON.parse(Cookie.get("user") as string).token
+        ? JSON.parse(Cookie.get("user") as string).access_token
         : null;
       if (!token) {
         toast.error("User is not authenticated.");
         return;
       }
+
+      console.log('Before api call to delete movie with id:', movieId);
 
       const response = await axios.delete(`${API_URL}/movies/${movieId}`, {
         headers: { Authorization: `Bearer ${token}` },

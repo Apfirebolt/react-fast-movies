@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuthStore from "../stores/auth";
 import usePlaylistStore from "../stores/playlist";
+import useMovieStore from "../stores/movie";
 import { Movie, Movies } from "../types/Movie";
 import type { Playlist } from "../types/Playlist";
 import { API_URL } from "../config";
@@ -29,6 +30,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuthStore();
   const { deletePlaylist, addPlaylist, updatePlaylist } = usePlaylistStore();
+  const { deleteMovie } = useMovieStore();
 
   const openEditModal = (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
@@ -88,27 +90,11 @@ const Dashboard: React.FC = () => {
     setLoading(false);
   };
 
-  const deleteMovie = async (movie: MovieDetails) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await axios.delete(`${API_URL}/movies/${movie.imdbID}`, {
-        headers: {
-          Authorization: `Bearer ${user.access_token}`,
-        },
-      });
-
-      if (response.status === 204) {
-        toast.dismiss();
-        toast.success("Movie deleted successfully.");
-        await fetchMovies();
-      }
-    } catch (err) {
-      setError("Failed to delete movie. Please try again.");
-    }
-    setLoading(false);
-  };
+  const deleteMovieUtil = async (movieId: number) => {
+    console.log('Movie id to delete:', movieId);
+    await deleteMovie(movieId);
+    await fetchMovies();
+  }
 
   const deletePlaylistUtil = async (playlistId: number) => {
     await deletePlaylist(playlistId);
@@ -256,7 +242,7 @@ const Dashboard: React.FC = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.4 }}
           >
-            <MoviesList movies={filteredMovies} deleteMovie={deleteMovie} />
+            <MoviesList movies={filteredMovies} deleteMovie={deleteMovieUtil} />
           </motion.div>
         )}
         {selectedTab === "playlist" && (

@@ -105,7 +105,7 @@ async def delete_movie_by_id(movie_id, current_user: User, database: Session):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Movie Not Found!"
             )
-        database.query(models.Movie).filter(models.Movie.imdbID == movie_id).delete()
+        database.query(models.Movie).filter(models.Movie.id == movie_id).delete()
         database.commit()
     except Exception as e:
         database.rollback()
