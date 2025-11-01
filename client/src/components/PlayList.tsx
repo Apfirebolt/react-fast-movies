@@ -54,15 +54,12 @@ const PlayList: React.FC<PlayListProps> = ({
                   className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2"
                 >
                   <FaTrash />
-                  Delete
                 </button>
                 <button onClick={() => openEditModal(playlist)} className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
                   <FaEdit />
-                  Edit
                 </button>
-                <button onClick={() => goToPlaylistDetails(playlist.id)} className="mt-2 px-4 py-2 bg-info ml-2 text-black rounded-md shadow-md hover:bg-primary flex items-center gap-2">
+                <button onClick={() => goToPlaylistDetails(playlist.id)} className="mt-2 px-4 py-2 bg-info ml-2 text-black rounded-md shadow-md hover:bg-primary hover:text-light flex items-center gap-2">
                   <FaEye />
-                  View
                 </button>
               </div>
             </div>

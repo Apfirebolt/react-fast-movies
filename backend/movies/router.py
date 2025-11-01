@@ -83,7 +83,7 @@ async def playlist_list(
 
 
 @playlist_router.get(
-    "/{playlist_id}", status_code=status.HTTP_200_OK, response_model=schema.PlayList
+    "/{playlist_id}", status_code=status.HTTP_200_OK, response_model=schema.PlaylistDetail
 )
 async def get_playlist_by_id(
     playlist_id: int,
@@ -134,7 +134,6 @@ async def add_movie_to_playlist(
 @playlist_router.delete(
     "/{playlist_id}/movies/{movie_id}",
     status_code=status.HTTP_200_OK,
-    response_model=schema.MoviePlaylistBase,
 )
 async def remove_movie_from_playlist(
     playlist_id: int,

@@ -174,7 +174,14 @@ async def get_playlist_by_id(playlist_id, current_user, database):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Playlist Not Found!"
             )
-        return playlist
+        # get all movies in the playlist
+        movies = (
+            database.query(models.Movie)
+            .join(models.PlaylistMovie)
+            .filter(models.PlaylistMovie.playlist_id == playlist.id)
+            .all()
+        )
+        return {"playlist": playlist, "movies": movies}
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -302,7 +309,7 @@ async def add_movie_to_playlist(
         )
 
 async def remove_movie_from_playlist(
-    movie_id: int, playlist_id: int, database: Session
+    playlist_id: int, movie_id: int, current_user: User, database: Session
 ) -> None:
     try:
         database.query(models.PlaylistMovie).filter(

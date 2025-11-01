@@ -71,17 +71,17 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       toast.error("Failed to add playlist.");
     }
   },
-  getSinglePlaylist: async (playlistId: string) => {
+  getSinglePlaylist: async (playlistId: string): Promise<Playlist | undefined> => {
     try {
       const token = Cookie.get("user")
         ? JSON.parse(Cookie.get("user") as string).access_token
         : null;
       if (!token) {
         toast.error("User is not authenticated.");
-        return;
+        return undefined;
       }
 
-      const response = await axios.get(
+      const response = await axios.get<Playlist>(
         `${API_URL}/playlists/${playlistId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -91,8 +91,10 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       if (response.status === 200) {
         return response.data;
       }
+      return undefined;
     } catch (error) {
       toast.error("Failed to fetch playlist.");
+      return undefined;
     }
   },
   deletePlaylist: async (playlistId) => {

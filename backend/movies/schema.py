@@ -63,3 +63,11 @@ class UserSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PlaylistDetail(BaseModel):
+    playlist: PlayList
+    movies: list[Movie]
+
+    class Config:
+        from_attributes = True
