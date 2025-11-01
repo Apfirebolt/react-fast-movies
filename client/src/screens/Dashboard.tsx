@@ -23,15 +23,18 @@ const Dashboard: React.FC = () => {
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
     null
   );
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
-  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState<boolean>(false);
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [movies, setMovies] = useState<Movies | null>(null);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuthStore();
-  const { deletePlaylist, addPlaylist, updatePlaylist } = usePlaylistStore();
+  const { deletePlaylist, addPlaylist, updatePlaylist, addMovieToPlaylist } =
+    usePlaylistStore();
   const { deleteMovie } = useMovieStore();
 
   const openEditModal = (playlist: Playlist) => {
@@ -95,7 +98,7 @@ const Dashboard: React.FC = () => {
   const deleteMovieUtil = async (movieId: number) => {
     await deleteMovie(movieId);
     await fetchMovies();
-  }
+  };
 
   const deletePlaylistUtil = async (playlistId: number) => {
     await deletePlaylist(playlistId);
@@ -123,12 +126,37 @@ const Dashboard: React.FC = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const openPlaylistModal = () => {
+  const openPlaylistModal = (movie: Movie) => {
+    console.log("Movie selected is ", movie);
+    setSelectedMovie(movie);
     setIsPlaylistModalOpen(true);
-  }
+  };
 
   const closePlaylistModal = () => {
     setIsPlaylistModalOpen(false);
+  };
+
+  const saveToPlaylists = async (playlistIds: string[]) => {
+    // print the playlist Ids and selected movie
+    if (!selectedMovie) {
+      toast.error("No movie selected to add to playlists.");
+      return;
+    }
+    const allRequestsCompleted = await Promise.allSettled(
+      playlistIds.map((playlistId) =>
+        addMovieToPlaylist(selectedMovie.id, parseInt(playlistId))
+      )
+    );
+    const failedRequests = allRequestsCompleted.filter(
+      (result) => result.status === "rejected"
+    );
+    if (failedRequests.length > 0) {
+      toast.error(`Failed to add movie to ${failedRequests.length} playlists.`);
+      closePlaylistModal();
+    } else {
+      toast.success("Movie added to playlists successfully!");
+      closePlaylistModal();
+    }
   };
 
   const filteredMovies = movies?.filter((movie) =>
@@ -251,7 +279,11 @@ const Dashboard: React.FC = () => {
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.4 }}
           >
-            <MoviesList movies={filteredMovies} deleteMovie={deleteMovieUtil} openPlaylistModal={openPlaylistModal} />
+            <MoviesList
+              movies={filteredMovies}
+              deleteMovie={deleteMovieUtil}
+              openPlaylistModal={openPlaylistModal}
+            />
           </motion.div>
         )}
         {selectedTab === "playlist" && (
@@ -381,6 +413,7 @@ const Dashboard: React.FC = () => {
               </motion.button>
               <PlaylistModal
                 playlists={playlists}
+                saveToPlaylists={saveToPlaylists}
               />
             </motion.div>
           </motion.div>

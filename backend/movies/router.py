@@ -93,16 +93,6 @@ async def get_playlist_by_id(
     return await services.get_playlist_by_id(playlist_id, current_user.id, database)
 
 
-@playlist_router.delete(
-    "/{playlist_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response
-)
-async def delete_playlist_by_id(
-    playlist_id: str,
-    database: Session = Depends(db.get_db),
-    current_user: User = Depends(get_current_user),
-):
-    return await services.delete_playlist_by_id(playlist_id, current_user, database)
-
 @playlist_router.put(
     "/{playlist_id}", status_code=status.HTTP_200_OK, response_model=schema.PlayList
 )
@@ -113,3 +103,46 @@ async def update_playlist(
     current_user: User = Depends(get_current_user),
 ):
     return await services.update_playlist(playlist_id, request, current_user, database)
+
+
+@playlist_router.delete(
+    "/{playlist_id}", status_code=status.HTTP_204_NO_CONTENT, response_class=Response
+)
+async def delete_playlist_by_id(
+    playlist_id: str,
+    database: Session = Depends(db.get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return await services.delete_playlist_by_id(playlist_id, current_user, database)
+
+
+@playlist_router.post(
+    "/{playlist_id}/movies/{movie_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=schema.MoviePlaylistBase,
+)
+async def add_movie_to_playlist(
+    playlist_id: int,
+    movie_id: int,
+    database: Session = Depends(db.get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return await services.add_movie_to_playlist(
+        movie_id, playlist_id, current_user, database
+    )
+
+
+@playlist_router.delete(
+    "/{playlist_id}/movies/{movie_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=schema.MoviePlaylistBase,
+)
+async def remove_movie_from_playlist(
+    playlist_id: int,
+    movie_id: int,
+    database: Session = Depends(db.get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return await services.remove_movie_from_playlist(
+        playlist_id, movie_id, current_user, database
+    )

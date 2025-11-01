@@ -238,9 +238,24 @@ async def update_playlist(playlist_id: int, request, current_user: User, databas
 
 
 async def add_movie_to_playlist(
-    movie_id: int, playlist_id: int, database: Session,
+    movie_id: int, playlist_id: int, current_user: User, database: Session,
 ) -> models.PlaylistMovie:
     try:
+        # throw error if it already exists
+        existing_entry = (
+            database.query(models.PlaylistMovie)
+            .join(models.Playlist)
+            .filter(
+                models.PlaylistMovie.movie_id == movie_id,
+                models.PlaylistMovie.playlist_id == playlist_id,
+            )
+            .first()
+        )
+        if existing_entry:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="This movie is already in the playlist.",
+            )
         new_playlist_movie = models.PlaylistMovie(
             movie_id=movie_id,
             playlist_id=playlist_id,

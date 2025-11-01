@@ -6,7 +6,7 @@ import { FaTrash, FaPlusCircle } from "react-icons/fa";
 interface MovieListProps {
   movies: Movie[];
   deleteMovie: (id: string) => void;
-  openPlaylistModal: () => void;
+  openPlaylistModal: (movie: Movie) => void;
 }
 
 const MovieList: React.FC<MovieListProps> = ({
@@ -45,7 +45,7 @@ const MovieList: React.FC<MovieListProps> = ({
                   Delete
                 </button>
                 <button
-                  onClick={() => openPlaylistModal(movie.id)}
+                  onClick={() => openPlaylistModal(movie)}
                   className="px-4 py-2 bg-info text-black rounded-md flex items-center shadow-md hover:bg-primary hover:text-white transition-colors duration-200"
                 >
                   <FaPlusCircle className="inline-block mr-2" />

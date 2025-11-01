@@ -11,6 +11,8 @@ interface PlaylistState {
   addPlaylist: (playlistName: string) => Promise<void>;
   deletePlaylist: (playlistId: string) => Promise<void>;
   updatePlaylist: (playlistData: { name: string }) => Promise<void>;
+  addMovieToPlaylist: (playlistId: string, movieId: string) => Promise<void>;
+  removeMovieFromPlaylist: (playlistId: string, movieId: string) => Promise<void>;
 }
 
 const usePlaylistStore = create<PlaylistState>((set, get) => ({
@@ -124,6 +126,69 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       toast.error("Failed to delete playlist.");
     }
   },
+  addMovieToPlaylist: async (movieId, playlistId) => {
+    try {
+      const token = Cookie.get("user")
+        ? JSON.parse(Cookie.get("user") as string).access_token
+        : null;
+      if (!token) {
+        toast.error("User is not authenticated.");
+        return;
+      }
+
+      const payload = {
+        movieId: movieId,
+        playlistId: playlistId
+      }
+
+      const responses = [];
+      
+      const response = await axios.post(
+        `${API_URL}/playlists/${playlistId}/movies/${movieId}`,
+        payload,
+        {
+          headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log('Response from adding movie to playlist:', response);
+      responses.push(response);
+      // Check if all responses were successful
+      const allSuccessful = responses.every(res => res.status === 200);
+
+      if (allSuccessful) {
+        toast.success("Movie added to playlist successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to add movie to playlist.");
+    }
+  },
+  removeMovieFromPlaylist: async (playlistId, movieId) => {
+    try {
+      const token = Cookie.get("user")
+        ? JSON.parse(Cookie.get("user") as string).access_token
+        : null;
+      if (!token) {
+        toast.error("User is not authenticated.");
+        return;
+      }
+
+      const response = await axios.delete(
+        `${API_URL}/playlists/${playlistId}/movies/${movieId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Movie removed from playlist successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to remove movie from playlist.");
+    }
+  }
 }));
 
 export default usePlaylistStore;

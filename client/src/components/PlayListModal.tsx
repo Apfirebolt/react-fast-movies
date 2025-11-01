@@ -3,9 +3,11 @@ import type { Playlist } from "../types/Playlist";
 
 interface PlayListProps {
   playlists: Playlist[];
+  movieId?: string;
+  saveToPlaylists?: (playlistIds: string[]) => void;
 }
 
-const PlayList: React.FC<PlayListProps> = ({ playlists }) => {
+const PlayList: React.FC<PlayListProps> = ({ playlists, saveToPlaylists }) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState<string[]>([]);
 
   const handleCheckboxChange = (playlistId: string) => {
@@ -18,11 +20,7 @@ const PlayList: React.FC<PlayListProps> = ({ playlists }) => {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const selectedPlaylistNames = playlists
-      .filter((playlist) => selectedPlaylists.includes(playlist.id))
-      .map((playlist) => playlist.name);
-    console.log("Selected playlists:", selectedPlaylistNames);
-    alert(`Selected playlists: ${selectedPlaylistNames.join(", ")}`);
+    saveToPlaylists?.(selectedPlaylists);
   };
 
   return (
