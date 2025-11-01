@@ -4,7 +4,8 @@ import About from "../screens/About";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import MovieDetail from "../screens/MovieDetail";
-import React from "react"; // Import React
+import Profile from "../screens/Profile";
+import React from "react";
 
 interface RouteConfig {
   path: string;
@@ -27,6 +28,10 @@ const routes: RouteConfig[] = [
   {
     path: "/register",
     component: Register,
+  },
+  {
+    path: "/profile",
+    component: Profile,
   },
   {
     path: "/movie/:id",

@@ -210,7 +210,7 @@ const Header: React.FC = () => {
                                 logout();
                                 setIsDropdownOpen(false);
                               }}
-                              className="w-full text-left text-red-600 hover:text-red-800 focus:outline-none"
+                              className="w-full px-2 py-1 shadow-lg rounded-xl text-center text-white bg-primary border border-transparent hover:border-red-800 focus:outline-none"
                             >
                               Sign Out
                             </button>
