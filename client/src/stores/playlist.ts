@@ -9,10 +9,14 @@ interface PlaylistState {
   playlists: Playlist[];
   fetchPlaylists: () => Promise<void>;
   addPlaylist: (playlistName: string) => Promise<void>;
+  getSinglePlaylist: (playlistId: string) => Promise<Playlist | undefined>;
   deletePlaylist: (playlistId: string) => Promise<void>;
   updatePlaylist: (playlistData: { name: string }) => Promise<void>;
   addMovieToPlaylist: (playlistId: string, movieId: string) => Promise<void>;
-  removeMovieFromPlaylist: (playlistId: string, movieId: string) => Promise<void>;
+  removeMovieFromPlaylist: (
+    playlistId: string,
+    movieId: string
+  ) => Promise<void>;
 }
 
 const usePlaylistStore = create<PlaylistState>((set, get) => ({
@@ -67,6 +71,30 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       toast.error("Failed to add playlist.");
     }
   },
+  getSinglePlaylist: async (playlistId: string) => {
+    try {
+      const token = Cookie.get("user")
+        ? JSON.parse(Cookie.get("user") as string).access_token
+        : null;
+      if (!token) {
+        toast.error("User is not authenticated.");
+        return;
+      }
+
+      const response = await axios.get(
+        `${API_URL}/playlists/${playlistId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      toast.error("Failed to fetch playlist.");
+    }
+  },
   deletePlaylist: async (playlistId) => {
     try {
       const token = Cookie.get("user")
@@ -105,7 +133,7 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
         toast.error("User is not authenticated.");
         return;
       }
-      
+
       const response = await axios.put(
         `${API_URL}/playlists/${playlistData.id}`,
         { name: playlistData.name },
@@ -126,7 +154,7 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
       toast.error("Failed to delete playlist.");
     }
   },
-  addMovieToPlaylist: async (movieId, playlistId) => {
+  addMovieToPlaylist: async (movieId, playlistIds) => {
     try {
       const token = Cookie.get("user")
         ? JSON.parse(Cookie.get("user") as string).access_token
@@ -138,27 +166,22 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
 
       const payload = {
         movieId: movieId,
-        playlistId: playlistId
-      }
+        playlistId: playlistIds,
+      };
 
-      const responses = [];
-      
+      console.log('Payload for adding movie to playlists:', payload);
+
       const response = await axios.post(
-        `${API_URL}/playlists/${playlistId}/movies/${movieId}`,
+        `${API_URL}/playlists/add/${movieId}`,
         payload,
         {
           headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
-      console.log('Response from adding movie to playlist:', response);
-      responses.push(response);
-      // Check if all responses were successful
-      const allSuccessful = responses.every(res => res.status === 200);
-
-      if (allSuccessful) {
+      if (response.status === 200) {
         toast.success("Movie added to playlist successfully!");
       }
     } catch (error) {
@@ -188,7 +211,7 @@ const usePlaylistStore = create<PlaylistState>((set, get) => ({
     } catch (error) {
       toast.error("Failed to remove movie from playlist.");
     }
-  }
+  },
 }));
 
 export default usePlaylistStore;

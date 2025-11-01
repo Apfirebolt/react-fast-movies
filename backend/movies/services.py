@@ -238,40 +238,68 @@ async def update_playlist(playlist_id: int, request, current_user: User, databas
 
 
 async def add_movie_to_playlist(
-    movie_id: int, playlist_id: int, current_user: User, database: Session,
+    request, current_user: User, database: Session,
 ) -> models.PlaylistMovie:
     try:
-        # throw error if it already exists
-        existing_entry = (
-            database.query(models.PlaylistMovie)
-            .join(models.Playlist)
-            .filter(
-                models.PlaylistMovie.movie_id == movie_id,
-                models.PlaylistMovie.playlist_id == playlist_id,
-            )
+        movie_id = request.movieId
+        playlist_ids = request.playlistId
+        
+        # Verify the movie exists and belongs to the user
+        movie = (
+            database.query(models.Movie)
+            .filter_by(id=movie_id, owner_id=current_user.id)
             .first()
         )
-        if existing_entry:
+        if not movie:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This movie is already in the playlist.",
+                status_code=status.HTTP_404_NOT_FOUND, detail="Movie Not Found!"
             )
-        new_playlist_movie = models.PlaylistMovie(
-            movie_id=movie_id,
-            playlist_id=playlist_id,
-            createdDate=datetime.now(),
-        )
-        database.add(new_playlist_movie)
+        
+        created_entries = []
+        
+        for playlist_id in playlist_ids:
+            # Verify the playlist exists and belongs to the user
+            playlist = (
+                database.query(models.Playlist)
+                .filter_by(id=playlist_id, owner_id=current_user.id)
+                .first()
+            )
+            if not playlist:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, 
+                    detail=f"Playlist with id {playlist_id} not found!"
+                )
+            
+            # Check if the movie is already in the playlist
+            existing_entry = (
+                database.query(models.PlaylistMovie)
+                .filter_by(movie_id=movie_id, playlist_id=playlist_id)
+                .first()
+            )
+            
+            if not existing_entry:
+                # Create new entry if it doesn't exist
+                new_entry = models.PlaylistMovie(
+                    movie_id=movie_id,
+                    playlist_id=playlist_id
+                )
+                database.add(new_entry)
+                created_entries.append(new_entry)
+        
         database.commit()
-        database.refresh(new_playlist_movie)
-        return new_playlist_movie
+        for entry in created_entries:
+            database.refresh(entry)
+        
+        return created_entries[0] if created_entries else None
+        
     except Exception as e:
         database.rollback()
+        if isinstance(e, HTTPException):
+            raise e
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"An error occurred while adding the movie to the playlist: {str(e)}",
+            detail=f"An error occurred while adding movie to playlists: {str(e)}",
         )
-
 
 async def remove_movie_from_playlist(
     movie_id: int, playlist_id: int, database: Session

@@ -142,20 +142,12 @@ const Dashboard: React.FC = () => {
       toast.error("No movie selected to add to playlists.");
       return;
     }
-    const allRequestsCompleted = await Promise.allSettled(
-      playlistIds.map((playlistId) =>
-        addMovieToPlaylist(selectedMovie.id, parseInt(playlistId))
-      )
-    );
-    const failedRequests = allRequestsCompleted.filter(
-      (result) => result.status === "rejected"
-    );
-    if (failedRequests.length > 0) {
-      toast.error(`Failed to add movie to ${failedRequests.length} playlists.`);
+    try {
+      // send array of playlist Ids and movie Id to backend
+      await addMovieToPlaylist(selectedMovie.id, playlistIds);
       closePlaylistModal();
-    } else {
-      toast.success("Movie added to playlists successfully!");
-      closePlaylistModal();
+    } catch (error) {
+      toast.error("Failed to save movie to playlists.");
     }
   };
 

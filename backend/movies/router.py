@@ -117,18 +117,17 @@ async def delete_playlist_by_id(
 
 
 @playlist_router.post(
-    "/{playlist_id}/movies/{movie_id}",
+    "/add/{movie_id}",
     status_code=status.HTTP_200_OK,
     response_model=schema.MoviePlaylistBase,
 )
 async def add_movie_to_playlist(
-    playlist_id: int,
-    movie_id: int,
+    request: schema.MoviePlaylistPayload,
     database: Session = Depends(db.get_db),
     current_user: User = Depends(get_current_user),
 ):
     return await services.add_movie_to_playlist(
-        movie_id, playlist_id, current_user, database
+        request, current_user, database
     )
 
 

@@ -1,8 +1,9 @@
 import React from "react";
 import type { Playlist } from "../types/Playlist";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import PlayListForm from "./PlayListForm";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 
 interface Playlist {
   id: string;
@@ -25,6 +26,11 @@ const PlayList: React.FC<PlayListProps> = ({
   deletePlaylist,
   openEditModal
 }) => {
+
+  const navigate = useNavigate();
+  const goToPlaylistDetails = (imdbID: string) => {
+    navigate(`/playlist/${imdbID}`);
+  };
   return (
     <div>
       <h2>Playlists</h2>
@@ -53,6 +59,10 @@ const PlayList: React.FC<PlayListProps> = ({
                 <button onClick={() => openEditModal(playlist)} className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
                   <FaEdit />
                   Edit
+                </button>
+                <button onClick={() => goToPlaylistDetails(playlist.id)} className="mt-2 px-4 py-2 bg-info ml-2 text-black rounded-md shadow-md hover:bg-primary flex items-center gap-2">
+                  <FaEye />
+                  View
                 </button>
               </div>
             </div>

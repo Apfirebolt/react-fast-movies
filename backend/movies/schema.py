@@ -15,9 +15,19 @@ class PlayList(PlaylistBase):
         from_attributes = True
 
 
+class MoviePlaylistPayload(BaseModel):
+    movieId: int
+    playlistId: list[int]
+
+
 class MoviePlaylistBase(BaseModel):
-    movie_id: int
+    id: int
+    createdDate: datetime
     playlist_id: int
+    movie_id: int
+
+    class Config:
+        from_attributes = True
 
 
 class MovieBase(BaseModel):
