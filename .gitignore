@@ -14,6 +14,8 @@ node_modules
 /build
 /documentation
 
+# recommendation model
+
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
