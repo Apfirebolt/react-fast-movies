@@ -3,6 +3,7 @@ from typing import List
 from . import models
 from backend.auth.models import User
 from datetime import datetime
+from backend.elastic import es_client
 
 from sqlalchemy.orm import Session
 from pydantic import HttpUrl
@@ -139,9 +140,24 @@ async def create_new_playlist(
         database.add(new_playlist)
         database.commit()
         database.refresh(new_playlist)
+
+        # add entry to elasticsearch index
+        if es_client:
+            await es_client.index(
+                index="playlists",
+                id=new_playlist.id,
+                document={
+                    "name": new_playlist.name,
+                    "owner_id": new_playlist.owner_id,
+                    "createdDate": new_playlist.createdDate.isoformat(),
+                },
+            )
+        else:
+            print("Elasticsearch client is not initialized.")
         return new_playlist
     except Exception as e:
         database.rollback()
+        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while creating the playlist: {str(e)}",
@@ -340,4 +356,25 @@ async def get_movies_in_playlist(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred while fetching movies in the playlist: {str(e)}",
+        )
+    
+
+async def get_playlist_recommendations(
+    playlist_id: int, database: Session
+) -> List[models.Movie]:
+    try:
+        # Get all movies in the playlist
+        movies_in_playlist = (
+            database.query(models.Movie)
+            .join(models.PlaylistMovie)
+            .filter(models.PlaylistMovie.playlist_id == playlist_id)
+            .all()
+        )
+        
+        # For simplicity, return movies in the playlist as recommendations
+        return movies_in_playlist
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred while fetching recommendations: {str(e)}",
         )

@@ -172,8 +172,8 @@ const Header: React.FC = () => {
                                   </Link>
                                 </li>
                                 <li>
-                                  <Link to="/settings" className="text-gray-600 hover:text-primary block">
-                                    Settings
+                                  <Link to="/recommendations" className="text-gray-600 hover:text-primary block">
+                                    Recommendations
                                   </Link>
                                 </li>
                                 <li>
