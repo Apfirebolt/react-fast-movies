@@ -1,13 +1,16 @@
 from fastapi import HTTPException, status
 from typing import List
 from . import models
+import json
 from backend.auth.models import User
 from datetime import datetime
 from backend.elastic import es_client
+from backend.rabbitMQ import RabbitMQManager
 
 from sqlalchemy.orm import Session
 from pydantic import HttpUrl
 
+rabbitmq_manager = RabbitMQManager()
 
 async def create_new_movie(
     request, database: Session, current_user: User
@@ -154,6 +157,18 @@ async def create_new_playlist(
             )
         else:
             print("Elasticsearch client is not initialized.")
+
+        # publish message to RabbitMQ
+        message_payload = {
+                "event": "playlist_created",
+                "playlist_id": new_playlist.id,
+                "owner_id": new_playlist.owner_id,
+                "name": new_playlist.name,
+                "created_at": new_playlist.createdDate.isoformat(),
+            }
+
+        await rabbitmq_manager.publish_message(message=json.dumps(message_payload))
+
         return new_playlist
     except Exception as e:
         database.rollback()

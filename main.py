@@ -5,6 +5,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 from contextlib import asynccontextmanager
 from backend.elastic import connect_elasticsearch, close_elasticsearch
+from backend.rabbitMQ import RabbitMQManager
 import uvicorn
 
 from backend.auth import router as auth_router
@@ -16,11 +17,12 @@ from backend.users import router as users_router
 async def lifespan(app: FastAPI):
     """Lifespan context manager for startup and shutdown events."""
     await connect_elasticsearch()
-
+    rabbitmq_manager = RabbitMQManager()
+    await rabbitmq_manager.connect()
     yield
 
     await close_elasticsearch()
-
+    await rabbitmq_manager.disconnect()
 
 # --- FASTAPI APP INITIALIZATION ---
 

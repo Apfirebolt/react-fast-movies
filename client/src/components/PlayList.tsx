@@ -45,22 +45,22 @@ const PlayList: React.FC<PlayListProps> = ({
           {playlists.map((playlist: Playlist) => (
             <div
               key={playlist.id}
-              className="bg-white shadow-md rounded-lg"
+              className="bg-white shadow-lg rounded-xl overflow-hidden"
             >
-              <h2 className="text-xl font-semibold mt-2 text-light bg-primary text-center">{playlist.name}</h2>
-              <div className="flex items-center p-4">
-                <button
-                  onClick={() => deletePlaylist({ id: playlist.id, name: playlist.name })}
-                  className="mt-2 px-4 py-2 bg-secondary text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2"
-                >
-                  <FaTrash />
-                </button>
-                <button onClick={() => openEditModal(playlist)} className="mt-2 px-4 py-2 bg-success ml-2 text-white rounded-md shadow-md hover:bg-primary flex items-center gap-2">
-                  <FaEdit />
-                </button>
-                <button onClick={() => goToPlaylistDetails(playlist.id)} className="mt-2 px-4 py-2 bg-info ml-2 text-black rounded-md shadow-md hover:bg-primary hover:text-light flex items-center gap-2">
-                  <FaEye />
-                </button>
+              <h2 className="text-xl font-semibold mt-2 text-light bg-primary text-center py-3">{playlist.name}</h2>
+              <div className="flex items-center justify-center gap-3 p-4">
+              <button
+                onClick={() => deletePlaylist({ id: playlist.id, name: playlist.name })}
+                className="px-4 py-2 bg-secondary text-white rounded-lg shadow-md hover:bg-primary hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                <FaTrash />
+              </button>
+              <button onClick={() => openEditModal(playlist)} className="px-4 py-2 bg-success text-white rounded-lg shadow-md hover:bg-primary hover:shadow-lg transition-all flex items-center gap-2">
+                <FaEdit />
+              </button>
+              <button onClick={() => goToPlaylistDetails(playlist.id)} className="px-4 py-2 bg-info text-black rounded-lg shadow-md hover:bg-primary hover:text-light hover:shadow-lg transition-all flex items-center gap-2">
+                <FaEye />
+              </button>
               </div>
             </div>
           ))}
