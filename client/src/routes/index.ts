@@ -5,6 +5,7 @@ import Login from "../screens/Login";
 import Register from "../screens/Register";
 import MovieDetail from "../screens/MovieDetail";
 import PlaylistDetail from "../screens/PlaylistDetail";
+import Recommendations from "../screens/Recommendations";
 import Profile from "../screens/Profile";
 import React from "react";
 
@@ -33,6 +34,10 @@ const routes: RouteConfig[] = [
   {
     path: "/profile",
     component: Profile,
+  },
+  {
+    path: "/recommendations",
+    component: Recommendations,
   },
   {
     path: "/movie/:id",

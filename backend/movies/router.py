@@ -83,6 +83,17 @@ async def playlist_list(
 
 
 @playlist_router.get(
+    "/recommendations", status_code=status.HTTP_200_OK, response_model=List[schema.PlayList]
+)
+async def get_playlist_recommendations(
+    database: Session = Depends(db.get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await services.get_playlist_recommendations(database, current_user.id)
+    return result
+
+
+@playlist_router.get(
     "/{playlist_id}", status_code=status.HTTP_200_OK, response_model=schema.PlaylistDetail
 )
 async def get_playlist_by_id(
