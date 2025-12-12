@@ -1,14 +1,6 @@
-"""
-Kafka Consumer script for Fast React Movies application.
-This script consumes messages from various Kafka topics and processes events.
-Run this separately from your main FastAPI application.
-"""
-
 import asyncio
-import json
 import logging
-from datetime import datetime
-from backend.kafkaConnection import KafkaConnection
+from kafkaConnection import KafkaConnection
 
 # Configure logging
 logging.basicConfig(
@@ -80,21 +72,6 @@ class EventProcessor:
         email = message.get('email')
         
         logger.info(f"New user registered: {username} ({email}) with ID: {user_id}")
-        
-        # Add your business logic here:
-        # - Send welcome email
-        # - Initialize user preferences
-        # - Track analytics
-        # - Update recommendation system
-        
-        # Example: Store registration analytics
-        await self._store_user_analytics({
-            'event': 'registration',
-            'user_id': user_id,
-            'username': username,
-            'email': email,
-            'timestamp': message.get('timestamp')
-        })
     
     async def _handle_user_login(self, message):
         """Handle user login event."""
@@ -103,19 +80,7 @@ class EventProcessor:
         login_time = message.get('login_time')
         
         logger.info(f"User login: {username} (ID: {user_id}) at {login_time}")
-        
-        # Add your business logic here:
-        # - Update last login time
-        # - Track user activity
-        # - Generate personalized recommendations
-        # - Security monitoring
-        
-        await self._track_user_activity({
-            'event': 'login',
-            'user_id': user_id,
-            'login_time': login_time,
-            'timestamp': message.get('timestamp')
-        })
+    
     
     async def _handle_movie_creation(self, message):
         """Handle movie creation event."""
@@ -126,20 +91,6 @@ class EventProcessor:
         
         logger.info(f"New movie added: {title} (ID: {movie_id}) by user {owner_id}")
         
-        # Add your business logic here:
-        # - Update recommendation models
-        # - Generate similar movie suggestions
-        # - Index for search
-        # - Update user preferences
-        
-        await self._update_movie_recommendations({
-            'movie_id': movie_id,
-            'title': title,
-            'imdb_id': imdb_id,
-            'owner_id': owner_id,
-            'timestamp': message.get('timestamp')
-        })
-    
     async def _handle_playlist_creation(self, message):
         """Handle playlist creation event."""
         playlist_id = message.get('playlist_id')
@@ -147,41 +98,7 @@ class EventProcessor:
         owner_id = message.get('owner_id')
         
         logger.info(f"New playlist created: {name} (ID: {playlist_id}) by user {owner_id}")
-        
-        # Add your business logic here:
-        # - Suggest similar playlists
-        # - Update user preferences
-        # - Generate playlist recommendations
-        
-        await self._process_playlist_analytics({
-            'playlist_id': playlist_id,
-            'name': name,
-            'owner_id': owner_id,
-            'timestamp': message.get('timestamp')
-        })
-    
-    async def _store_user_analytics(self, data):
-        """Store user analytics data."""
-        # Implement your analytics storage logic
-        logger.info(f"Storing user analytics: {data}")
-        # Example: Save to database, send to analytics service, etc.
-    
-    async def _track_user_activity(self, data):
-        """Track user activity."""
-        # Implement activity tracking logic
-        logger.info(f"Tracking user activity: {data}")
-        # Example: Update user activity logs, update last seen, etc.
-    
-    async def _update_movie_recommendations(self, data):
-        """Update movie recommendation models."""
-        # Implement recommendation update logic
-        logger.info(f"Updating movie recommendations: {data}")
-        # Example: Train ML models, update similarity matrices, etc.
-    
-    async def _process_playlist_analytics(self, data):
-        """Process playlist analytics."""
-        # Implement playlist analytics logic
-        logger.info(f"Processing playlist analytics: {data}")
+
 
 class KafkaEventConsumer:
     """Main Kafka consumer for processing events."""
@@ -241,6 +158,7 @@ class KafkaEventConsumer:
             async for message in consumer:
                 try:
                     logger.debug(f"Received message from {topic}: {message.value}")
+                    print(f"Received message from {topic}: {message.value}")
                     await handler(message.value)
                 except Exception as e:
                     logger.error(f"Error processing message from {topic}: {e}")
