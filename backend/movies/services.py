@@ -138,6 +138,8 @@ async def get_movie_by_id(movie_id, current_user, database):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Movie Not Found!"
             )
         return movie
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -159,6 +161,9 @@ async def delete_movie_by_id(movie_id, current_user: User, database: Session):
             )
         database.query(models.Movie).filter(models.Movie.id == movie_id).delete()
         database.commit()
+    except HTTPException:
+        database.rollback()
+        raise
     except Exception as e:
         database.rollback()
         raise HTTPException(
@@ -229,6 +234,9 @@ async def create_new_playlist(
         await rabbitmq_manager.publish_message(message=json.dumps(message_payload))
 
         return new_playlist
+    except HTTPException:
+        database.rollback()
+        raise
     except Exception as e:
         database.rollback()
         print(e)

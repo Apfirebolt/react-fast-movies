@@ -6,7 +6,7 @@ This file demonstrates how to use the KafkaManager and related utilities.
 import asyncio
 import logging
 from typing import Dict, Any, Optional
-from kafkaUtils import (
+from backend.kafkaConnection import (
     KafkaConfig, 
     KafkaManager, 
     send_user_event, 
