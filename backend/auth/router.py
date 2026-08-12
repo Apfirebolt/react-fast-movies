@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from typing import List
+from datetime import datetime
 from backend import db
 from . import schema
 from . import services
@@ -10,6 +11,7 @@ from . jwt import create_access_token, get_current_user
 
 from . import hashing
 from . models import User
+from ..kafkaConnection import send_kafka_message
 
 router = APIRouter(tags=['Auth'], prefix='/api/auth')
 
@@ -36,7 +38,7 @@ async def get_all_users(database: Session = Depends(db.get_db)):
 
 
 @router.post('/login')
-def login(request: schema.Login,
+async def login(request: schema.Login,
           database: Session = Depends(db.get_db)):    
     user = database.query(User).filter(User.email == request.email).first()
     if not user:
@@ -48,9 +50,21 @@ def login(request: schema.Login,
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Password")
 
     # Generate a JWT Token
-    user = schema.DisplayAccount.from_orm(user)
-    access_token = create_access_token(data={"sub": user.email, "id": user.id})
-    return {"access_token": access_token, "token_type": "bearer", "user": user}
+    user_display = schema.DisplayAccount.from_orm(user)
+    access_token = create_access_token(data={"sub": user_display.email, "id": user_display.id})
+    
+    # Publish user login event to Kafka
+    kafka_message = {
+        "event": "user_login",
+        "user_id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "login_time": datetime.now().isoformat(),
+        "timestamp": datetime.now().isoformat(),
+    }
+    await send_kafka_message("user-events", kafka_message, str(user.id))
+    
+    return {"access_token": access_token, "token_type": "bearer", "user": user_display}
 
 
 @router.get('/profile', response_model=schema.DisplayAccount)

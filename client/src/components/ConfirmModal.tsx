@@ -1,4 +1,5 @@
 import React from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -20,26 +21,44 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Confirm Action
-        </h3>
-        <p className="text-gray-600 mb-6">{message}</p>
-        <div className="flex gap-3 justify-end">
-          <button
-            onClick={cancelAction}
-            className="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
-          >
-            {cancelText}
-          </button>
-          <button
-            onClick={confirmAction}
-            className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
-          >
-            {confirmText}
-          </button>
+    <div className="space-y-6 text-slate-200">
+      {/* Modal Header & Warning Icon */}
+      <div className="flex items-start space-x-4 border-b border-slate-800 pb-5">
+        <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 flex-shrink-0">
+          <FaExclamationTriangle className="w-5 h-5" />
         </div>
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 block mb-0.5">
+            Confirmation Required
+          </span>
+          <h3 className="text-xl font-extrabold text-white tracking-tight">
+            Confirm Action
+          </h3>
+        </div>
+      </div>
+
+      {/* Message Body */}
+      <div className="py-1">
+        <p className="text-sm text-slate-300 leading-relaxed">{message}</p>
+      </div>
+
+      {/* Action Buttons Footer */}
+      <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+        <button
+          type="button"
+          onClick={cancelAction}
+          className="px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white border border-slate-700/60 transition-colors cursor-pointer"
+        >
+          {cancelText}
+        </button>
+
+        <button
+          type="button"
+          onClick={confirmAction}
+          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-500 shadow-md shadow-red-950/40 transition-all cursor-pointer"
+        >
+          {confirmText}
+        </button>
       </div>
     </div>
   );

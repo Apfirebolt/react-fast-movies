@@ -1,8 +1,10 @@
 from fastapi import HTTPException, status
 from typing import List, Optional
+from datetime import datetime
 
 from . import schema
 from . import models
+from ..kafkaConnection import send_kafka_message
 
 
 async def new_user_register(request: schema.BaseModel, database) -> models.User:
@@ -13,6 +15,19 @@ async def new_user_register(request: schema.BaseModel, database) -> models.User:
         database.add(new_user)
         database.commit()
         database.refresh(new_user)
+        
+        # Publish user registration event to Kafka
+        kafka_message = {
+            "event": "user_registered",
+            "user_id": new_user.id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "role": new_user.role,
+            "registered_at": datetime.now().isoformat(),
+            "timestamp": datetime.now().isoformat(),
+        }
+        await send_kafka_message("user-events", kafka_message, str(new_user.id))
+        
         return new_user
     except Exception as e:
         database.rollback()

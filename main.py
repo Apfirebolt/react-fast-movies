@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from contextlib import asynccontextmanager
 from backend.elastic import connect_elasticsearch, close_elasticsearch
 from backend.rabbitMQ import RabbitMQManager
+from backend.kafkaConnection import get_kafka_connection, kafka_connection
 import uvicorn
 
 from backend.auth import router as auth_router
@@ -16,13 +17,26 @@ from backend.users import router as users_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan context manager for startup and shutdown events."""
+    print("🚀 Starting up the FastAPI application...")
     await connect_elasticsearch()
     rabbitmq_manager = RabbitMQManager()
     await rabbitmq_manager.connect()
+    
+    # Initialize Kafka connection
+    print("🔌 Connecting to Kafka...")
+    await get_kafka_connection()
+    print("✅ Kafka connection established")
+    
     yield
 
     await close_elasticsearch()
     await rabbitmq_manager.disconnect()
+    
+    # Close Kafka connections
+    if kafka_connection:
+        print("🔌 Closing Kafka connections...")
+        await kafka_connection.close_connections()
+        print("✅ Kafka connections closed")
 
 # --- FASTAPI APP INITIALIZATION ---
 
@@ -31,7 +45,7 @@ app = FastAPI(
     docs_url="/movies-docs",
     version="0.0.1",
     lifespan=lifespan,
-)  # FIX: lifespan is now correctly passed
+)
 
 origins = [
     "http://localhost:3000",

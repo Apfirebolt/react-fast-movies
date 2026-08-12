@@ -58,3 +58,13 @@ alembic upgrade head
 ```
 pip install 'pydantic[email]'
 ```
+
+## Running Tests
+
+```
+cd "/Users/amit/Projects/Fast API/fast-react-movies" && "/Users/amit/Projects/Fast API/fast-react-movies/venv/bin/python" -m pytest backend/tests/ -v
+```
+
+```
+cd "/Users/amit/Projects/Fast API/fast-react-movies" && "/Users/amit/Projects/Fast API/fast-react-movies/venv/bin/python" -m pytest backend/tests/ --cov=backend --cov-report=term-missing --tb=short
+```

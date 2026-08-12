@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import useAuthStore from "../stores/auth";
-import { FaBars, FaChevronDown } from "react-icons/fa";
+import { FaBars, FaChevronDown, FaUser, FaFilm, FaSignOutAlt, FaTimes } from "react-icons/fa";
 import Logo from "../assets/logo.png";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -35,222 +35,298 @@ const Header: React.FC = () => {
 
   const getLinkStyles = (tabName: string) => {
     const baseStyles =
-      "hover:text-dark transition-all duration-200 hover:text-xl";
-    const activeStyles = selectedTab === tabName ? "font-bold underline" : "";
+      "text-sm font-semibold transition-all duration-200 hover:text-indigo-400 py-1 border-b-2";
+    const activeStyles =
+      selectedTab === tabName
+        ? "text-indigo-400 border-indigo-500 font-bold"
+        : "text-slate-300 border-transparent";
     return `${baseStyles} ${activeStyles}`;
   };
 
   const getMobileLinkStyles = (tabName: string) => {
-    const baseStyles = "hover:text-light";
-    const activeStyles = selectedTab === tabName ? "font-bold underline" : "";
+    const baseStyles = "block px-4 py-2.5 rounded-xl text-sm font-semibold transition-all";
+    const activeStyles =
+      selectedTab === tabName
+        ? "bg-indigo-600 text-white"
+        : "text-slate-300 hover:bg-slate-800 hover:text-white";
     return `${baseStyles} ${activeStyles}`;
   };
 
   return (
-    <header className="bg-white text-primary">
-      <aside>
-        <div className="md:hidden py-3 px-2">
-          <button
-            className="focus:outline-none"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-          >
-            <FaBars size={24} />
-          </button>
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div
-                id="mobile-menu"
-                className="bg-gray-800 text-white"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ul className="flex flex-col space-y-4 p-4">
-                  <li className="bg-secondary p-2 rounded-md">
-                    <Link to="/" className={getMobileLinkStyles("home")}>
-                      Home
-                    </Link>
-                  </li>
-                  <li className="bg-secondary p-2 rounded-md">
-                    <Link to="/about" className={getMobileLinkStyles("about")}>
-                      About
-                    </Link>
-                  </li>
-                  {user ? (
-                    <>
-                      <li className="hover:text-light">
-                        Welcome, {user?.user?.email}
-                      </li>
-                      <li className="bg-secondary p-2 rounded-md">
-                        <Link
-                          to="/dashboard"
-                          className={getMobileLinkStyles("dashboard")}
-                        >
-                          Dashboard
-                        </Link>
-                      </li>
-                      <li className="bg-secondary p-2 rounded-md">
-                        <button
-                          onClick={logout}
-                          className="hover:text-light focus:outline-none"
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </>
-                  ) : (
-                    <>
-                      <li className="bg-secondary p-2 rounded-md">
-                        <Link
-                          to="/login"
-                          className={getMobileLinkStyles("login")}
-                        >
-                          Login
-                        </Link>
-                      </li>
-                      <li className="bg-secondary p-2 rounded-md">
-                        <Link
-                          to="/register"
-                          className={getMobileLinkStyles("register")}
-                        >
-                          Register
-                        </Link>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </aside>
-      <div className="container hidden md:flex mx-auto justify-between items-center px-6">
-        <img src={Logo} alt="Company Logo" className="logo-style" />
-        <h1 className="text-2xl font-bold">
-          <Link to="/">Monstella</Link>
-        </h1>
-        <nav>
-          <ul className="flex space-x-6">
-            <li>
-              <Link to="/" className={getLinkStyles("home")}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className={getLinkStyles("about")}>
-                About
-              </Link>
-            </li>
+    <header className="sticky top-0 z-50 bg-slate-950/90 border-b border-slate-800/80 backdrop-blur-md text-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          
+          {/* Brand Logo & Name with Light Badge Wrapper */}
+          <div className="flex items-center space-x-3">
+            <Link to="/" className="flex items-center space-x-2.5 group">
+              {/* Light background container for dark/transparent logos */}
+              <div className="bg-slate-100 p-1.5 rounded-xl border border-white/20 shadow-sm flex items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src={Logo}
+                  alt="Monstella Logo"
+                  className="h-6 w-auto object-contain"
+                />
+              </div>
+              <span className="text-xl font-extrabold tracking-tight text-white group-hover:text-indigo-400 transition-colors">
+                Monstella
+              </span>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link to="/" className={getLinkStyles("home")}>
+              Home
+            </Link>
+            <Link to="/about" className={getLinkStyles("about")}>
+              About
+            </Link>
+
             {user ? (
               <>
-                <li className="relative" ref={dropdownRef}>
-                    <button
+                <Link to="/dashboard" className={getLinkStyles("dashboard")}>
+                  Dashboard
+                </Link>
+
+                {/* Account & Content Dropdown Menu */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="hover:text-dark flex items-center gap-1 focus:outline-none transition-all duration-200"
-                    >
-                    Welcome, {user?.user?.email}
-                    <FaChevronDown className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                    className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-slate-700 text-xs font-semibold transition-all focus:outline-none"
+                  >
+                    <div className="h-6 w-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px] uppercase">
+                      {user?.user?.email?.charAt(0) || "U"}
+                    </div>
+                    <span className="max-w-[120px] truncate">{user?.user?.email}</span>
+                    <FaChevronDown
+                      className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${
+                        isDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
                   <AnimatePresence>
                     {isDropdownOpen && (
                       <motion.div
-                        className="absolute top-full right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-3 w-80 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden z-50 text-slate-300"
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <div className="p-4">
+                        <div className="p-5 space-y-4">
+                          
+                          {/* User Header */}
+                          <div className="border-b border-slate-800/80 pb-3">
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                              Signed in as
+                            </p>
+                            <p className="text-xs font-bold text-white truncate mt-0.5">
+                              {user?.user?.email}
+                            </p>
+                          </div>
+
+                          {/* Grid Navigation */}
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <h3 className="font-semibold text-gray-800 mb-2">Account</h3>
-                              <ul className="space-y-2">
+                              <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center space-x-1">
+                                <FaUser className="w-3 h-3 inline mr-1" />
+                                Account
+                              </h3>
+                              <ul className="space-y-1.5 text-xs">
                                 <li>
-                                  <Link to="/profile" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/profile"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     Profile
                                   </Link>
                                 </li>
                                 <li>
-                                  <Link to="/recommendations" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/recommendations"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     Recommendations
                                   </Link>
                                 </li>
                                 <li>
-                                  <Link to="/billing" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/billing"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     Billing
                                   </Link>
                                 </li>
                               </ul>
                             </div>
+
                             <div>
-                              <h3 className="font-semibold text-gray-800 mb-2">Content</h3>
-                              <ul className="space-y-2">
+                              <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center space-x-1">
+                                <FaFilm className="w-3 h-3 inline mr-1" />
+                                Content
+                              </h3>
+                              <ul className="space-y-1.5 text-xs">
                                 <li>
-                                  <Link to="/favorites" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/favorites"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     Favorites
                                   </Link>
                                 </li>
                                 <li>
-                                  <Link to="/watchlist" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/watchlist"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     Watchlist
                                   </Link>
                                 </li>
                                 <li>
-                                  <Link to="/history" className="text-gray-600 hover:text-primary block">
+                                  <Link
+                                    to="/history"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="hover:text-white hover:translate-x-0.5 transition-all block py-1"
+                                  >
                                     History
                                   </Link>
                                 </li>
                               </ul>
                             </div>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-gray-200">
+
+                          {/* Sign Out Button */}
+                          <div className="pt-3 border-t border-slate-800/80">
                             <button
                               onClick={() => {
                                 logout();
                                 setIsDropdownOpen(false);
                               }}
-                              className="w-full px-2 py-1 shadow-lg rounded-xl text-center text-white bg-primary border border-transparent hover:border-red-800 focus:outline-none"
+                              className="w-full py-2 px-3 rounded-xl text-xs font-semibold text-red-400 bg-red-950/30 hover:bg-red-950/60 border border-red-800/40 flex items-center justify-center space-x-2 transition-all cursor-pointer"
                             >
-                              Sign Out
+                              <FaSignOutAlt className="w-3.5 h-3.5" />
+                              <span>Sign Out</span>
                             </button>
                           </div>
+
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </li>
-                <li>
-                  <Link to="/dashboard" className={getLinkStyles("dashboard")}>
-                    Dashboard
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    onClick={logout}
-                    className="hover:text-dark focus:outline-none transition-all duration-200 hover:text-xl"
-                  >
-                    Logout
-                  </button>
-                </li>
+                </div>
               </>
             ) : (
-              <>
-                <li>
-                  <Link to="/login" className={getLinkStyles("login")}>
-                    Login
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/register" className={getLinkStyles("register")}>
-                    Register
-                  </Link>
-                </li>
-              </>
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-xs font-semibold text-slate-300 hover:text-white transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl shadow-md transition-all"
+                >
+                  Create Account
+                </Link>
+              </div>
             )}
-          </ul>
-        </nav>
+          </nav>
+
+          {/* Mobile Menu Toggle Button */}
+          <div className="flex md:hidden items-center">
+            <button
+              className="p-2 text-slate-400 hover:text-white focus:outline-none"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              aria-label="Toggle Navigation Menu"
+            >
+              {isMenuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
+            </button>
+          </div>
+
+        </div>
       </div>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            id="mobile-menu"
+            className="md:hidden bg-slate-900 border-b border-slate-800 p-4 space-y-3"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="space-y-1">
+              <Link
+                to="/"
+                className={getMobileLinkStyles("home")}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/about"
+                className={getMobileLinkStyles("about")}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+
+              {user ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className={getMobileLinkStyles("dashboard")}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <div className="pt-2 border-t border-slate-800 space-y-1">
+                    <p className="px-4 py-1 text-xs text-slate-500">
+                      Logged in as {user?.user?.email}
+                    </p>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-red-400 hover:bg-red-950/30 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="pt-2 border-t border-slate-800 flex flex-col space-y-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-full text-center px-4 py-2.5 text-sm font-semibold text-slate-200 bg-slate-800 rounded-xl"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-full text-center px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl"
+                  >
+                    Create Account
+                  </Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

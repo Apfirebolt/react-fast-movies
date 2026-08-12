@@ -6,6 +6,7 @@ from backend.auth.models import User
 from datetime import datetime
 from backend.elastic import es_client
 from backend.rabbitMQ import RabbitMQManager
+from backend.kafkaConnection import send_kafka_message
 
 from sqlalchemy.orm import Session
 from pydantic import HttpUrl
@@ -50,6 +51,53 @@ async def create_new_movie(
         database.add(new_movie)
         database.commit()
         database.refresh(new_movie)
+
+        # add entry to elasticsearch index
+        if es_client:
+            await es_client.index(
+                index="movies",
+                id=new_movie.id,
+                document={
+                    "title": new_movie.title,
+                    "imdbID": new_movie.imdbID,
+                    "poster": new_movie.poster,
+                    "year": new_movie.year,
+                    "type": new_movie.type,
+                    "owner_id": new_movie.owner_id,
+                    "createdDate": new_movie.createdDate.isoformat(),
+                },
+            )
+        else:
+            print("Elasticsearch client is not initialized.")
+
+        # Publish message to Kafka
+        kafka_message = {
+            "event": "movie_created",
+            "movie_id": new_movie.id,
+            "imdb_id": new_movie.imdbID,
+            "title": new_movie.title,
+            "year": new_movie.year,
+            "type": new_movie.type,
+            "owner_id": new_movie.owner_id,
+            "created_at": new_movie.createdDate.isoformat(),
+            "timestamp": datetime.now().isoformat(),
+        }
+        await send_kafka_message("movie-events", kafka_message, str(new_movie.id))
+
+        # publish message to RabbitMQ
+        message_payload = {
+            "event": "movie_created",
+            "movie_id": new_movie.id,
+            "imdb_id": new_movie.imdbID,
+            "title": new_movie.title,
+            "year": new_movie.year,
+            "type": new_movie.type,
+            "owner_id": new_movie.owner_id,
+            "created_at": new_movie.createdDate.isoformat(),
+        }
+
+        await rabbitmq_manager.publish_message(message=json.dumps(message_payload))
+        
         return new_movie
     except Exception as e:
         database.rollback()
@@ -90,6 +138,8 @@ async def get_movie_by_id(movie_id, current_user, database):
                 status_code=status.HTTP_404_NOT_FOUND, detail="Movie Not Found!"
             )
         return movie
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -111,6 +161,9 @@ async def delete_movie_by_id(movie_id, current_user: User, database: Session):
             )
         database.query(models.Movie).filter(models.Movie.id == movie_id).delete()
         database.commit()
+    except HTTPException:
+        database.rollback()
+        raise
     except Exception as e:
         database.rollback()
         raise HTTPException(
@@ -158,6 +211,17 @@ async def create_new_playlist(
         else:
             print("Elasticsearch client is not initialized.")
 
+        # Publish message to Kafka
+        kafka_message = {
+            "event": "playlist_created",
+            "playlist_id": new_playlist.id,
+            "owner_id": new_playlist.owner_id,
+            "name": new_playlist.name,
+            "created_at": new_playlist.createdDate.isoformat(),
+            "timestamp": datetime.now().isoformat(),
+        }
+        await send_kafka_message("playlist-events", kafka_message, str(new_playlist.id))
+
         # publish message to RabbitMQ
         message_payload = {
                 "event": "playlist_created",
@@ -170,6 +234,9 @@ async def create_new_playlist(
         await rabbitmq_manager.publish_message(message=json.dumps(message_payload))
 
         return new_playlist
+    except HTTPException:
+        database.rollback()
+        raise
     except Exception as e:
         database.rollback()
         print(e)
