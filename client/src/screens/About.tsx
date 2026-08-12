@@ -1,27 +1,30 @@
 import React, { useState } from "react";
-import Slider from "react-slick";
 import { motion, AnimatePresence } from "framer-motion";
-// import next and prev icons from react-icons
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
-const About: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+interface Slide {
+  title: string;
+  content: string;
+}
 
-  const slides = [
+const About: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+
+  const slides: Slide[] = [
     {
       title: "Our Mission",
       content:
-        "To create high-quality applications that enhance user experiences and provide value.",
+        "To create high-quality applications that enhance user experiences and provide immense value to our global audience.",
     },
     {
       title: "Our Vision",
       content:
-        "To be a leading provider of innovative software solutions that empower users worldwide.",
+        "To be a leading provider of innovative, cinematic software solutions that empower and entertain users worldwide.",
     },
     {
       title: "Our Values",
       content:
-        "Integrity, innovation, and customer satisfaction are at the core of everything we do.",
+        "Integrity, relentless innovation, and user satisfaction are at the core of everything we build.",
     },
   ];
 
@@ -34,85 +37,113 @@ const About: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div
-        className="w-full h-full bg-cover bg-center flex flex-col items-center justify-center text-white p-4"
-        style={{
-          backgroundImage: `url('https://static1.cbrimages.com/wordpress/wp-content/uploads/2018/04/Avengers-Infinity-War-feature.jpg')`,
-          minHeight: "100vh",
-        }}
-      >
-        <div className="bg-primary text-accent text-center p-4">
-          <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">About Us</h1>
-          <p className="text-lg text-center max-w-2xl drop-shadow-md">
-            Welcome to our application! This project is built using modern
-            technologies like React, TypeScript, and Tailwind CSS. Our goal is
-            to provide a seamless and enjoyable experience for our users.
-          </p>
-          <p className="text-lg text-center max-w-2xl mt-4 drop-shadow-md">
-            Feel free to explore and learn more about what we do. Thank you for
-            visiting!
-          </p>
-        </div>
+    <div className="relative flex flex-col items-center min-h-screen bg-slate-950 text-slate-300 font-sans overflow-hidden">
+      
+      {/* Background Decorative Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-indigo-500/10 blur-3xl pointer-events-none rounded-full" />
 
-        <div className="w-full mt-8 text-primary">
-          <div className="relative p-8">
-            <div className="overflow-hidden rounded-lg">
+      {/* Main Content Container */}
+      <main className="relative z-10 flex flex-col items-center w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-12">
+        
+        {/* Intro Section */}
+        <section className="w-full max-w-3xl mb-16 text-center">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-6">
+            <span>✨ The Vision Behind Monstella</span>
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl mb-6">
+            Discover What <span className="text-indigo-400">Drives Us.</span>
+          </h1>
+          <p className="mt-4 text-base sm:text-lg text-slate-400 leading-relaxed">
+            Welcome to Monstella, your gateway to unparalleled cinematic experiences. This platform is built upon a foundation of modern technologies—React, TypeScript, and Tailwind CSS—with a single goal: to provide a seamless, enjoyable, and high-performance journey for every user.
+          </p>
+          <p className="mt-6 text-sm sm:text-base text-slate-500 max-w-xl mx-auto">
+            Explore our core principles and discover the commitment that brings this vision to life. Thank you for joining us!
+          </p>
+        </section>
+
+        {/* Custom Framer Motion Carousel Section */}
+        <section className="w-full max-w-3xl">
+          <div className="relative px-2 sm:px-8 lg:px-0">
+            
+            {/* Animated Slide Container */}
+            <div className="overflow-hidden rounded-2xl">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-lg shadow-lg p-6"
+                  initial={{ opacity: 0, x: 50, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, scale: 0.98 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="bg-slate-900/60 border border-slate-800/80 rounded-2xl shadow-xl hover:shadow-indigo-500/5 transition-shadow duration-300 p-8 sm:p-10 flex flex-col h-full min-h-[160px] sm:min-h-[180px] justify-between"
                 >
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-tight mb-4 group-hover:text-indigo-400 transition-colors">
                     {slides[currentSlide].title}
                   </h3>
-                  <p>{slides[currentSlide].content}</p>
+                  <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+                    {slides[currentSlide].content}
+                  </p>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <button
-              onClick={prevSlide}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-primary bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all"
-            >
-              <FaArrowLeft />
-            </button>
-
-            <button
-              onClick={nextSlide}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all"
-            >
-              <FaArrowRight />
-            </button>
-          </div>
-
-          <div className="flex justify-center mt-4 space-x-2 mx-12">
-            {slides.map((_, index) => (
+            {/* Navigation Buttons - Tablet & Desktop View (Hidden on mobile) */}
+            <div className="hidden sm:flex absolute left-0 right-0 top-1/2 -translate-y-1/2 justify-between px-0 sm:-px-8 lg:-px-16 pointer-events-none">
               <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentSlide ? "bg-white" : "bg-white bg-opacity-50"
-                }`}
-              />
-            ))}
+                onClick={prevSlide}
+                className="w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 text-indigo-400 border border-slate-700/60 backdrop-blur-sm flex items-center justify-center transition-all duration-200 pointer-events-auto transform hover:scale-105 active:scale-95"
+                aria-label="Previous Slide"
+              >
+                <FaArrowLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={nextSlide}
+                className="w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 text-indigo-400 border border-slate-700/60 backdrop-blur-sm flex items-center justify-center transition-all duration-200 pointer-events-auto transform hover:scale-105 active:scale-95"
+                aria-label="Next Slide"
+              >
+                <FaArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Pagination Indicators */}
+            <div className="flex justify-center mt-10 space-x-2.5">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === currentSlide 
+                      ? "w-8 h-2.5 bg-indigo-500 shadow-lg shadow-indigo-500/20" 
+                      : "w-2.5 h-2.5 bg-slate-700 hover:bg-slate-600"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+            
+            {/* Mobile Navigation Buttons (Hidden on sm and up) */}
+            <div className="flex sm:hidden items-center justify-center space-x-6 mt-8 pointer-events-auto">
+                <button
+                    onClick={prevSlide}
+                    className="w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 text-indigo-400 border border-slate-700/60 flex items-center justify-center transition-colors duration-200"
+                    aria-label="Previous Slide"
+                >
+                    <FaArrowLeft className="w-5 h-5" />
+                </button>
+
+                <button
+                    onClick={nextSlide}
+                    className="w-12 h-12 rounded-full bg-slate-800/80 hover:bg-slate-700 text-indigo-400 border border-slate-700/60 flex items-center justify-center transition-colors duration-200"
+                    aria-label="Next Slide"
+                >
+                    <FaArrowRight className="w-5 h-5" />
+                </button>
+            </div>
+
           </div>
-        </div>
-        <div className="w-full mt-8">
-          <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
-            {slides.map((slide, index) => (
-              <div key={index} className="p-4 bg-primary text-accent rounded-lg">
-                <h3 className="text-xl font-semibold mb-2">{slide.title}</h3>
-                <p>{slide.content}</p>
-              </div>
-            ))}
-          </Slider>
-        </div>
-      </div>
+        </section>
+
+      </main>
     </div>
   );
 };
