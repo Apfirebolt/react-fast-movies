@@ -57,14 +57,17 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Brand Logo & Name */}
+          {/* Brand Logo & Name with Light Badge Wrapper */}
           <div className="flex items-center space-x-3">
             <Link to="/" className="flex items-center space-x-2.5 group">
-              <img
-                src={Logo}
-                alt="Monstella Logo"
-                className="h-9 w-auto object-contain transition-transform group-hover:scale-105"
-              />
+              {/* Light background container for dark/transparent logos */}
+              <div className="bg-slate-100 p-1.5 rounded-xl border border-white/20 shadow-sm flex items-center justify-center transition-transform group-hover:scale-105">
+                <img
+                  src={Logo}
+                  alt="Monstella Logo"
+                  className="h-6 w-auto object-contain"
+                />
+              </div>
               <span className="text-xl font-extrabold tracking-tight text-white group-hover:text-indigo-400 transition-colors">
                 Monstella
               </span>
@@ -251,7 +254,7 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Overlay & Links */}
+      {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
