@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import Content from "../components/Content";
-import { FaSearch, FaEye, FaSave } from "react-icons/fa";
+import { FaSearch, FaEye, FaBookmark, FaFilm } from "react-icons/fa";
 import type { Movies, MovieDetails } from "../types/Movie";
 import useAuthStore from "../stores/auth";
 import { toast } from "react-toastify";
@@ -18,6 +18,7 @@ const Home: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const saveMovie = async (movie: MovieDetails) => {
     if (!user) {
@@ -43,9 +44,9 @@ const Home: React.FC = () => {
         }
       );
       if (response.status === 201) {
-        toast.success("Movie saved successfully!");
+        toast.success("Movie saved to playlist successfully!");
       }
-    } catch (error) {
+    } catch (error: any) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.detail);
       } else {
@@ -54,9 +55,8 @@ const Home: React.FC = () => {
     }
   };
 
-  const navigate = useNavigate();
-
   const getMovies = useCallback(async () => {
+    if (!debouncedQuery.trim()) return;
     try {
       setLoading(true);
       setError(null);
@@ -65,16 +65,18 @@ const Home: React.FC = () => {
         `${MOVIE_API_URL}?s=${debouncedQuery}&apikey=${mapApiKey}`
       );
       if (response.status === 200) {
-        setMovies(response.data);
+        if (response.data.Response === "False") {
+          setError(response.data.Error || "No movies found.");
+          setMovies(null);
+        } else {
+          setMovies(response.data);
+        }
       }
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setError("An unexpected error occurred. Please try again.");
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [debouncedQuery, mapApiKey]);
 
   const goToMovieDetails = (imdbID: string) => {
@@ -84,7 +86,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 500); // Adjust the debounce delay as needed (e.g., 500ms)
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -96,76 +98,136 @@ const Home: React.FC = () => {
   }, [getMovies]);
 
   return (
-    <div className="flex flex-col items-center justify-center bg-light p-4">
-      <Content
-        title="Search Movies"
-        content="Discover the latest movies, explore your favorites, and enjoy a seamless browsing experience."
-      />
-      <div className="mb-4 flex justify-center items-center w-1/2">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search for movies..."
-          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          onClick={() => getMovies()}
-          className="px-4 py-2 bg-tertiary mx-2 text-white rounded-md shadow-md hover:bg-blue-600 flex items-center"
-        >
-          <FaSearch className="mr-2" />
-          Search
-        </button>
-      </div>
+    <div className="relative min-h-screen bg-slate-950 text-slate-300 font-sans overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+      
+      {/* Background Decorative Ambient Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-96 bg-indigo-500/10 blur-3xl pointer-events-none rounded-full" />
 
-      {loading && <Loader />}
-      {error && (
-        <p className="text-lg text-secondary text-center border-2 border-primary px-2 py-3">
-          {error}
-        </p>
-      )}
-      {movies && (
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 mt-4">
-          {movies.Search && movies.Search.map((movie) => (
-            <div
-              key={movie.imdbID}
-              className="break-inside-avoid p-4 border rounded-md shadow-md mb-4"
-            >
-              <h2 className="text-xl font-bold">{movie.Title}</h2>
-              <p>{movie.Year}</p>
-              <img
-                src={movie.Poster}
-                alt={movie.Title}
-                className="w-full h-auto mt-2 rounded-md"
+      <main className="relative z-10 max-w-7xl mx-auto space-y-12">
+        
+        {/* Header & Hero Section */}
+        <section className="text-center space-y-4">
+          <Content
+            title="Search Movies"
+            content="Discover the latest releases, explore timeless classics, and build your personal movie watchlist."
+          />
+
+          {/* Search Bar Input */}
+          <div className="max-w-2xl mx-auto pt-4">
+            <div className="relative flex items-center bg-slate-900/80 rounded-2xl border border-slate-800 p-1.5 shadow-xl focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+              <FaSearch className="w-5 h-5 text-slate-500 ml-4 flex-shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search movies by title (e.g., Avengers, Batman)..."
+                className="w-full bg-transparent px-4 py-2.5 text-slate-100 text-sm sm:text-base focus:outline-none placeholder-slate-500"
               />
-              <div className="flex">
-                <button
-                  onClick={() => goToMovieDetails(movie.imdbID)}
-                  className="mt-2 px-4 py-2 bg-tertiary text-white rounded-md shadow-md flex items-center hover:bg-blue-600"
-                >
-                  <FaEye className="mx-1" />
-                  View Details
-                </button>
-                <button
-                  onClick={() => saveMovie(movie)}
-                  className="mt-2 mx-2 px-4 py-2 bg-success text-light rounded-md shadow-md flex items-center hover:bg-green-600"
-                >
-                  <FaSave className="mx-1" />
-                  Save Movie
-                </button>
-              </div>
+              <button
+                onClick={() => getMovies()}
+                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all duration-200 flex items-center space-x-2 flex-shrink-0"
+              >
+                <span>Search</span>
+              </button>
             </div>
-          ))}
-        </div>
-      )}
-      <p className="text-lg text-gray-600 text-center max-w-2xl">
-        Discover the latest movies, explore your favorites, and enjoy a seamless
-        browsing experience. Built with React, TypeScript, and Tailwind CSS, our
-        platform is designed to bring you closer to the world of cinema.
-      </p>
-      <p className="text-lg text-gray-600 text-center max-w-2xl mt-4">
-        Start exploring now and dive into the world of movies like never before!
-      </p>
+          </div>
+        </section>
+
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="py-12 flex justify-center">
+            <Loader />
+          </div>
+        )}
+
+        {/* Error Message Banner */}
+        {error && !loading && (
+          <div className="max-w-md mx-auto p-4 rounded-xl bg-red-950/40 border border-red-800/60 text-center text-red-300 text-sm font-medium">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {/* Movie Cards Grid */}
+        {!loading && movies?.Search && (
+          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {movies.Search.map((movie) => {
+              const hasPoster = movie.Poster && movie.Poster !== "N/A";
+
+              return (
+                <div
+                  key={movie.imdbID}
+                  className="group relative bg-slate-900/60 rounded-2xl border border-slate-800/80 overflow-hidden shadow-lg hover:shadow-indigo-500/10 hover:border-slate-700/80 transition-all duration-300 flex flex-col justify-between"
+                >
+                  {/* Poster Container */}
+                  <div className="relative aspect-[2/3] w-full bg-slate-950 overflow-hidden">
+                    {hasPoster ? (
+                      <img
+                        src={movie.Poster}
+                        alt={movie.Title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 p-4 text-center">
+                        <FaFilm className="w-12 h-12 mb-2 opacity-50" />
+                        <span className="text-xs">No Poster Available</span>
+                      </div>
+                    )}
+
+                    {/* Badge: Release Year */}
+                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-slate-950/80 border border-slate-800 text-xs font-semibold text-slate-300 backdrop-blur-md">
+                      {movie.Year}
+                    </span>
+
+                    {/* Badge: Type */}
+                    <span className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-indigo-950/80 border border-indigo-800/60 text-xs font-bold uppercase tracking-wider text-indigo-300 backdrop-blur-md">
+                      {movie.Type}
+                    </span>
+                  </div>
+
+                  {/* Details & Actions Footer */}
+                  <div className="p-5 flex flex-col justify-between flex-grow space-y-4">
+                    <div>
+                      <h3 className="text-base font-bold text-white group-hover:text-indigo-400 transition-colors line-clamp-2">
+                        {movie.Title}
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60">
+                      <button
+                        onClick={() => goToMovieDetails(movie.imdbID)}
+                        className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors"
+                      >
+                        <FaEye className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>Details</span>
+                      </button>
+
+                      <button
+                        onClick={() => saveMovie(movie)}
+                        className="w-full py-2 px-3 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors"
+                      >
+                        <FaBookmark className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>Save</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+        )}
+
+        {/* Footer Info Text */}
+        <section className="pt-12 border-t border-slate-800/60 text-center space-y-2 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Discover the latest movies, explore your favorites, and enjoy a seamless browsing experience. Built with React, TypeScript, and Tailwind CSS.
+          </p>
+          <p className="text-xs text-slate-500">
+            Start exploring now and dive into the world of cinema with Monstella!
+          </p>
+        </section>
+
+      </main>
     </div>
   );
 };
