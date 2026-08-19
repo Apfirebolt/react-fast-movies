@@ -12,6 +12,7 @@ from . jwt import create_access_token, get_current_user
 from . import hashing
 from . models import User
 from ..kafkaConnection import send_kafka_message
+from backend.auth.email import send_login_notification_email
 
 router = APIRouter(tags=['Auth'], prefix='/api/auth')
 
@@ -63,7 +64,20 @@ async def login(request: schema.Login,
         "timestamp": datetime.now().isoformat(),
     }
     await send_kafka_message("user-events", kafka_message, str(user.id))
-    
+
+    # Send login notification email
+    try:
+        send_login_notification_email(
+            recipient_email='aspper20@gmail.com',
+            username=user.username,
+            login_time=datetime.now().isoformat()
+        )
+    except Exception as e:
+        # Log the error but do not prevent login
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Failed to send login notification email to {user.email}: {str(e)}")
+
     return {"access_token": access_token, "token_type": "bearer", "user": user_display}
 
 
